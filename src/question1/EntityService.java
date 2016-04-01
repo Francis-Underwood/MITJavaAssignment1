@@ -1,10 +1,29 @@
 package question1;
 
-import java.util.Hashtable;
+import java.util.*;
+import java.io.Serializable;
 
-public abstract class EntityService<K, V> extends Hashtable<K, V> {
-	public abstract void add(K key, V val);
-	//public abstract V get(K key);	// it is provided by Hashtable
-	//public abstract void update(K key, V val);
-	//public abstract void delete(K key, V val);
+public class EntityService<K, V> implements Serializable {
+	
+	private final Hashtable<K, V> entitySet = new Hashtable<K, V>();
+	
+	public void add(K key, V val) {
+		entitySet.put(key, val);
+	}
+	
+	public V get(K key) {
+		return (V)entitySet.get(key);
+	}
+	
+	public void update(K key, V val) {
+		entitySet.replace(key, val);
+	}
+	
+	public void delete(K key) {
+		entitySet.remove(key);
+	}
+	
+	public Collection<V> getAll() {
+		return entitySet.values();
+	}
 }

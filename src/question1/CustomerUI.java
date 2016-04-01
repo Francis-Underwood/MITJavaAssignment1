@@ -5,15 +5,17 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.table.*;
+
 
 public class CustomerUI extends JFrame implements ActionListener{
 	JTextField txtCustId, txtCustName;
 	JButton btnAdd;
 	
-	public CustomerUI () {
+	public CustomerUI (ArrayList<Customer> customerList) {
 		//
 		setTitle("Customer Master");
 		//setLayout(null);
@@ -35,7 +37,7 @@ public class CustomerUI extends JFrame implements ActionListener{
 		
 		
 	
-		JTable table = new JTable(new MyTableModel());
+		JTable table = new JTable(new CustomerTableModel(customerList));
 		
 		
 		table.setPreferredScrollableViewportSize(new Dimension(550, 100));
@@ -65,22 +67,18 @@ public class CustomerUI extends JFrame implements ActionListener{
 }
 
 
-class MyTableModel extends AbstractTableModel  {
-    String[] columnNames = {"First Name",
-                                "Last Name",
-                                "Sport",
-                                "# of Years",
-                                "Vegetarian"};
- 
-    Object[][] data = {
-        {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-        {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-        {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-        {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-        {"Joe", "Brown", "Pool", new Integer(10), new Boolean(false)}
-        };
-        
-  
+class CustomerTableModel extends AbstractTableModel {
+	static final public String[] columnNames = {"C Id", "C Name"};
+	protected ArrayList<Customer> customerList;
+    
+	public CustomerTableModel(ArrayList<Customer> customerList) {
+		this.customerList = customerList;
+	}
+    
+    public void setCustomerList(ArrayList<Customer> customerList) {
+    	this.customerList = customerList;
+    }
+    
     @Override
     public int getColumnCount() {
         return columnNames.length;
@@ -88,7 +86,7 @@ class MyTableModel extends AbstractTableModel  {
 
     @Override
     public int getRowCount() {
-        return data.length;
+        return customerList.size();
     }
 
     @Override
@@ -98,7 +96,27 @@ class MyTableModel extends AbstractTableModel  {
 
     @Override
     public Object getValueAt(int row, int col) {
-        return data[row][col];
+    	if (row < 0 || row>=getRowCount())
+    	      return "";
+    	/*
+    	    StockData row = (StockData)m_vector.elementAt(row);
+    	    switch (col) {
+    	      case 0: return row.m_symbol;
+    	      case 1: return row.m_name;
+    	      case 2: return row.m_last;
+    	      case 3: return row.m_open;
+    	      case 4: return row.m_change;
+    	      case 5: return row.m_changePr;
+    	      case 6: return row.m_volume;
+    	    }
+    	   */
+    	Customer c = this.customerList.get(row);
+    	switch (col) {
+	      case 0: return c.getCid();
+	      case 1: return c.getCname();
+	    }
+    	
+    	    return "";
     }
 /*
     @Override
