@@ -64,7 +64,7 @@ class Customers extends Hashtable {
 	
 }
 
-class Employees extends Hashtable<String, Employee> {
+class Employees extends Hashtable {
 
 	public void addEmployee (String eid, String fname, String lname) {
 		Employee emp = new Employee(eid,fname,lname);

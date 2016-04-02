@@ -11,7 +11,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 
-public class CustomerUI extends JFrame implements ActionListener{
+public class CustomerUI extends JFrame implements ActionListener {
+	String feelNLook = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 	JTextField txtCustId, txtCustName;
 	JButton btnAdd;
 	
@@ -56,7 +57,23 @@ public class CustomerUI extends JFrame implements ActionListener{
 		con.add(p);
 		
 		
-  
+		try {
+			UIManager.setLookAndFeel(feelNLook);
+			SwingUtilities.updateComponentTreeUI(this);
+		} 
+		catch (UnsupportedLookAndFeelException ex1) {
+		      System.err.println("Unsupported LookAndFeel: " + feelNLook);
+		    }
+		    catch (ClassNotFoundException ex2) {
+		      System.err.println("LookAndFeel class not found: " + feelNLook);
+		    }
+		    catch (InstantiationException ex3) {
+		      System.err.println("Could not load LookAndFeel: " + feelNLook);
+		    }
+		    catch (IllegalAccessException ex4) {
+		      System.err.println("Cannot use LookAndFeel: " + feelNLook);
+		    }
+	    
 		setVisible(true);
 		
 	}
@@ -68,7 +85,7 @@ public class CustomerUI extends JFrame implements ActionListener{
 
 
 class CustomerTableModel extends AbstractTableModel {
-	static final public String[] columnNames = {"C Id", "C Name"};
+	static final public String[] columnNames = {"Customer Id", "Customer Name"};
 	protected ArrayList<Customer> customerList;
     
 	public CustomerTableModel(ArrayList<Customer> customerList) {

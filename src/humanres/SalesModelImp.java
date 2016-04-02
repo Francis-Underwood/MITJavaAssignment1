@@ -43,7 +43,10 @@ class EmployeeUI extends JFrame implements ActionListener{
 		if(ae.getActionCommand().equals("Get")) {
 				Sales sales = EmployeeMaster.factory();
 				String[] data = sales.select(txtEmpID.getText(),db);
-				txtEmpName.setText(data[1]+" "+data[2]);
+				
+				Employee e = db.getEmployee(txtEmpID.getText());
+				
+				txtEmpName.setText(e.getFname()+" "+e.getLname());
 		}
 	}
 }

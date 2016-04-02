@@ -3,7 +3,7 @@ package question1;
 import java.util.*;
 import java.io.Serializable;
 
-public class EntityService<K, V> implements Serializable {
+public abstract class EntityService<K, V> implements Serializable {
 	
 	private final Hashtable<K, V> entitySet = new Hashtable<K, V>();
 	
@@ -23,7 +23,7 @@ public class EntityService<K, V> implements Serializable {
 		entitySet.remove(key);
 	}
 	
-	public Collection<V> getAll() {
-		return entitySet.values();
+	public ArrayList<V> getAll() {
+		return new ArrayList<V>(entitySet.values());
 	}
 }
