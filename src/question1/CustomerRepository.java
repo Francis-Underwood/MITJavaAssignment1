@@ -22,7 +22,7 @@ public class CustomerRepository implements Repository<String, Customer> {
 		db.delete(key);
 	}
 	
-	public ArrayList<Customer> all(String key, EntityService<String, Customer> db) {
+	public ArrayList<Customer> all(EntityService<String, Customer> db) {
 		return db.getAll();
 	}
 	

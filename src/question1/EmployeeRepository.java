@@ -22,7 +22,7 @@ public class EmployeeRepository implements Repository<String, Employee> {
 		db.delete(key);
 	}
 	
-	public ArrayList<Employee> all(String key, EntityService<String, Employee> db) {
+	public ArrayList<Employee> all(EntityService<String, Employee> db) {
 		return db.getAll();
 	}
 	

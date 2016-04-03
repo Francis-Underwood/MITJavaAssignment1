@@ -1,17 +1,37 @@
 package question1;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import javax.swing.*;
 
 public class StartUp {
 
+	private final static String feelNLook = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
-		CustomerUI ui = new CustomerUI(new ArrayList<Customer>());
+		JFrame frame = new JFrame();
+		frame.setTitle("Customer Master");
+		frame.setBounds(10,10,1000,600);
+		//frame.setSize(300, 200);
+		Container con = frame.getContentPane();
+		
+		/////////////////////////////
+	
+		
+		
+		/////////////////////////////
+		
+		
+		
+		
+		/*
+		EmployeePanel empPanl = new EmployeePanel(new ArrayList<Employee>());
 		
 		// generate init test data
 		Employees elist = new Employees();
@@ -74,10 +94,6 @@ public class StartUp {
 		
 		
 		
-		
-		
-		
-		
 		Employee e = elist.get("E002");
 		System.out.println("Employee: " + e.getFname() + " " + e.getLname());
 		
@@ -85,26 +101,45 @@ public class StartUp {
 		System.out.println("Customer: " + c.getCname() + ", pay with " + c.getPaymentMethod());
 		
 		
-		
-		
 		DB db = new DB();
-		db.saveDatabase(clist1,"customersdb.txt");
+		db.saveDatabase(elist,"customersdb.txt");
+		
+		*/
 		
 		
-		/*
+		/////////////////////////
+		
+		
+		
+		/**/
 		DB db = new DB();
-		Customers clist = (Customers)db.loadDatabase("customersdb.txt");
+		Employees elist = (Employees)db.loadDatabase("customersdb.txt");
 		
-		Repository custRepo = CustomerRepository.factory();
-		Customer c = (Customer)custRepo.select("1003", clist);
+		Repository<String, Employee> empyRepo = EmployeeRepository.factory();
+		Employee empy = empyRepo.select("E003", elist);
 		
 		
 		//Customer c = clist.get("1003");
-		System.out.println("Customer: " + c.getCname());
+		System.out.println("Employee: " + empy.getFname());
 		
-		ArrayList<Customer> customerList = new ArrayList<Customer>(clist.getAll());
-		CustomerUI ui = new CustomerUI(customerList);
-		*/
+		;
+		
+		ArrayList<Employee> empList = new ArrayList<Employee>(empyRepo.all(elist));
+		
+		EmployeePanel empPanl = new EmployeePanel(empList);
+		
+		
+		
+		
+		
+		
+		/**/
+		con.add(empPanl, BorderLayout.NORTH);
+		
+		frame.setVisible(true);
+		//System.out.println("X: " + empPanl.getX());
+		//System.out.println("Y: " + empPanl.getY());
+		
 		
 	}
 
