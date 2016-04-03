@@ -3,7 +3,7 @@ package question1;
 import java.util.*;
 import java.io.Serializable;
 
-public abstract class EntityService<K, V> implements Serializable 
+public abstract class EntityService<K, V> implements Serializable
 {
 	
 	private final Hashtable<K, V> entitySet = new Hashtable<K, V>();

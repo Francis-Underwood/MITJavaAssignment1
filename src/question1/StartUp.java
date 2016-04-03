@@ -10,21 +10,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.*;
+import question1.systemEvents.*;
 
 public class StartUp {
 
 	private final static String feelNLook = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 	private static String status = "e";
+	private static JFrame frame;
+	private static Container con;
 	private static EmployeePanel empPanl;
+	private static CustomerPanel custPanl;
 	private static Employees elist;
+	private static Repository<String, Employee> empyRepo = EmployeeRepository.factory();
 	
 	public static void main(String[] args) {
 		
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		frame.setTitle("Customer Master");
 		frame.setBounds(10,10,1000,600);
 		//frame.setSize(300, 200);
-		Container con = frame.getContentPane();
+		con = frame.getContentPane();
 		
 		// tool bar
 		JToolBar tb = new JToolBar();
@@ -33,26 +38,29 @@ public class StartUp {
 		JButton bt = new JButton(new ImageIcon("img/Insert24.gif"));
 		tb.add(bt);
 		
-		ActionListener createBtnLstn = new ActionListener() 
-		{
+		ActionListener createBtnLstn = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if ("e" == status)
-				{
-					System.out.println("Halo!");
+				if ("e" == status) {
+					//System.out.println("Halo!");
 					con.remove(empPanl);
+					custPanl = new CustomerPanel(null);
+					con.add(custPanl);
 					frame.revalidate();
 					frame.repaint();
 					status = "c";
-					System.out.println("Halo!"+ elist.get("E002").getEid());
+					//System.out.println("Halo!"+ elist.get("E002").getEid());
 				}
-				else
-				{
+				/*
+				else {
+					con.remove(custPanl);
+					custPanl = null;
 					con.add(empPanl, BorderLayout.WEST);
 					frame.revalidate();
 					frame.repaint();
 					status = "e";
 				}
+				*/
 			}
 		};
 		
@@ -154,7 +162,7 @@ public class StartUp {
 		DB db = new DB();
 		elist = (Employees)db.loadDatabase("customersdb.txt");
 		
-		Repository<String, Employee> empyRepo = EmployeeRepository.factory();
+		
 		Employee empy = empyRepo.select("E003", elist);
 		
 		
@@ -165,6 +173,24 @@ public class StartUp {
 		
 		empPanl = new EmployeePanel(empList);
 		
+		EditEmployeeListener editEmpyLstn = new EditEmployeeListener() {
+			public void editEmpoyee(EditEmployeeEvent evt) {
+				String eid = evt.getEmployeeId();
+				Employee empy = empyRepo.select(eid, elist);
+				if ("e" == status) {
+					System.out.println("Halo! Halo! Halo!" + empy);
+					con.remove(empPanl);
+					custPanl = new CustomerPanel(empy);
+					con.add(custPanl);
+					frame.revalidate();
+					frame.repaint();
+					status = "c";
+					//System.out.println("Halo!"+ elist.get("E002").getEid());
+				}
+			}
+		};
+		
+		empPanl.addEditEmployeeListener(editEmpyLstn);
 		
 		
 		
@@ -204,7 +230,7 @@ public class StartUp {
 		
 	}
 	
-
+	
 	
 	
 

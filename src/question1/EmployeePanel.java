@@ -6,16 +6,19 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import question1.systemEvents.*;
 
-public class EmployeePanel extends JPanel implements ActionListener 
-{
+public class EmployeePanel extends JPanel implements ActionListener {
+	
 	protected JScrollPane scrollPane;
 	protected JTable table;
 	protected JLabel m_title;
@@ -24,8 +27,10 @@ public class EmployeePanel extends JPanel implements ActionListener
 	protected JButton editBtn;
 	protected EmployeeTableModel employeeModel;
 	
-	public EmployeePanel (ArrayList<Employee> empList) 
-	{
+	// custom event
+	private List<EditEmployeeListener> listeners = new ArrayList<EditEmployeeListener>();
+	
+	public EmployeePanel (ArrayList<Employee> empList) {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		
@@ -65,8 +70,7 @@ public class EmployeePanel extends JPanel implements ActionListener
 		setBounds(0, 0, 800, 300);
 	}
 	
-	public void actionPerformed(ActionEvent atnEvt)
-	{
+	public void actionPerformed(ActionEvent atnEvt)	{
 		if ("delete" == atnEvt.getActionCommand())
 		{
 			int rowInd = table.getSelectedRow();
@@ -79,6 +83,9 @@ public class EmployeePanel extends JPanel implements ActionListener
 		{
 			int rowInd = table.getSelectedRow();
 			String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
+			// inform main
+			EditEmployeeEvent eee = new EditEmployeeEvent(this, empyKey);
+			goEditEmployee(eee);
 		}
 		else
 		{
@@ -86,34 +93,39 @@ public class EmployeePanel extends JPanel implements ActionListener
 		}
 	}
 	
-	public void insertEmployee(Employee emp)
-	{
+	public void insertEmployee(Employee emp) {
 		
+	}
+	
+	public void addEditEmployeeListener(EditEmployeeListener toAdd) {
+        listeners.add(toAdd);
+    }
+	
+	public void goEditEmployee(EditEmployeeEvent eeEvt) {
+		for (EditEmployeeListener hl : listeners) {
+            hl.editEmpoyee(eeEvt);
+		}
 	}
 	
 }
 
-class EmployeeTableModel extends AbstractTableModel 
-{
+class EmployeeTableModel extends AbstractTableModel {
 	
 	static final public String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", 
 												"# of Customers"};
 	protected ArrayList<Employee> empList;
 	
-	public EmployeeTableModel(ArrayList<Employee> empList) 
-	{
+	public EmployeeTableModel(ArrayList<Employee> empList) {
 	    this.empList = empList;
 	}
 	
 	@Override
-	public int getColumnCount() 
-	{
+	public int getColumnCount() {
 	    return columnNames.length;
 	}
 	
 	@Override
-    public int getRowCount() 
-	{
+    public int getRowCount() {
         return empList.size();
     }
 	
@@ -123,8 +135,7 @@ class EmployeeTableModel extends AbstractTableModel
     }
 	 
 	@Override
-    public Object getValueAt(int row, int col) 
-	{
+    public Object getValueAt(int row, int col) {
     	if (row < 0 || row >= getRowCount()) 
     	{
     	      return "";
@@ -142,21 +153,18 @@ class EmployeeTableModel extends AbstractTableModel
     	return "";
     }
 	
-	public void removeRow(int index)
-	{
+	public void removeRow(int index) {
 		empList.remove(index);
 		this.fireTableRowsDeleted(index, index);
 		//System.out.println("here");
 	}
 	
-	public void addRow(Employee emp)
-	{
+	public void addRow(Employee emp) {
 		empList.add(emp);
 		this.fireTableRowsInserted(empList.size()-1, empList.size()-1);
 	}
 	
-	public String getTitle() 
-	{
+	public String getTitle() {
 		return "Employee List";
 	}
 	
