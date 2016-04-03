@@ -2,6 +2,8 @@ package question1;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -12,6 +14,9 @@ import javax.swing.*;
 public class StartUp {
 
 	private final static String feelNLook = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+	private static String status = "e";
+	private static EmployeePanel empPanl;
+	private static Employees elist;
 	
 	public static void main(String[] args) {
 		
@@ -20,6 +25,40 @@ public class StartUp {
 		frame.setBounds(10,10,1000,600);
 		//frame.setSize(300, 200);
 		Container con = frame.getContentPane();
+		
+		// tool bar
+		JToolBar tb = new JToolBar();
+		tb.setFloatable(false);
+		
+		JButton bt = new JButton(new ImageIcon("img/Insert24.gif"));
+		tb.add(bt);
+		
+		ActionListener createBtnLstn = new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) {
+				
+				if ("e" == status)
+				{
+					System.out.println("Halo!");
+					con.remove(empPanl);
+					frame.revalidate();
+					frame.repaint();
+					status = "c";
+					System.out.println("Halo!"+ elist.get("E002").getEid());
+				}
+				else
+				{
+					con.add(empPanl, BorderLayout.WEST);
+					frame.revalidate();
+					frame.repaint();
+					status = "e";
+				}
+			}
+		};
+		
+		bt.addActionListener(createBtnLstn);
+		
+		con.add(tb, BorderLayout.NORTH);
 		
 		/////////////////////////////
 	
@@ -113,7 +152,7 @@ public class StartUp {
 		
 		/**/
 		DB db = new DB();
-		Employees elist = (Employees)db.loadDatabase("customersdb.txt");
+		elist = (Employees)db.loadDatabase("customersdb.txt");
 		
 		Repository<String, Employee> empyRepo = EmployeeRepository.factory();
 		Employee empy = empyRepo.select("E003", elist);
@@ -122,11 +161,9 @@ public class StartUp {
 		//Customer c = clist.get("1003");
 		System.out.println("Employee: " + empy.getFname());
 		
-		;
+		ArrayList<Employee> empList = new ArrayList<Employee>(empyRepo.all(elist));	// new copies of the employee, change on table model won't affect the original ones
 		
-		ArrayList<Employee> empList = new ArrayList<Employee>(empyRepo.all(elist));
-		
-		EmployeePanel empPanl = new EmployeePanel(empList);
+		empPanl = new EmployeePanel(empList);
 		
 		
 		
@@ -134,7 +171,31 @@ public class StartUp {
 		
 		
 		/**/
-		con.add(empPanl, BorderLayout.NORTH);
+		con.add(empPanl, BorderLayout.WEST);
+		
+		
+		// set style
+		try 
+		{
+			UIManager.setLookAndFeel(feelNLook);
+			SwingUtilities.updateComponentTreeUI(frame);
+		} 
+		catch (UnsupportedLookAndFeelException ex1) 
+		{
+		      System.err.println("Unsupported LookAndFeel: " + feelNLook);
+	    }
+	    catch (ClassNotFoundException ex2) 
+		{
+	      System.err.println("LookAndFeel class not found: " + feelNLook);
+	    }
+	    catch (InstantiationException ex3) 
+		{
+	      System.err.println("Could not load LookAndFeel: " + feelNLook);
+	    }
+	    catch (IllegalAccessException ex4) 
+		{
+	      System.err.println("Cannot use LookAndFeel: " + feelNLook);
+	    }
 		
 		frame.setVisible(true);
 		//System.out.println("X: " + empPanl.getX());
@@ -142,8 +203,13 @@ public class StartUp {
 		
 		
 	}
+	
+
+	
+	
 
 }
+
 
 class DB {
 	public Object loadDatabase(String f) {
