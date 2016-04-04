@@ -1,7 +1,5 @@
 package question1;
 
-import java.util.ArrayList;
-
 public class GenerateFakeDog {
 
 	public static void main(String[] args) {

@@ -21,9 +21,10 @@ public class StartUp {
 	private static Container con;
 	private static EmployeePanel empPanl;
 	private static CustomerPanel custPanl;
-	private static JToolBar tb = new JToolBar();;
-	private static JButton createEmpyBtn = new JButton(new ImageIcon("img/Insert24.gif"));
+	private static JToolBar tb = new JToolBar();
 	private static JButton saveDBBtn = new JButton(new ImageIcon("img/Save24.gif"));
+	private static JButton openDBBtn = new JButton(new ImageIcon("img/Open24.gif"));
+	private static JButton printBtn = new JButton(new ImageIcon("img/Print24.gif"));
 	
 	// data access
 	private static DB db = new DB();
@@ -32,10 +33,10 @@ public class StartUp {
 	
 	// listeners
 	private static ActionListener saveDataMenuLstn;
-	private static ActionListener createEmpyBtnLstn;
 	private static EditEmployeeListener editEmpyLstn;
 	private static DeleteEmployeeListener delEmpyLstn;
 	private static SaveEmployeeListener saveEmpyLstn;
+	private static CreateEmployeeListener crteEmpyLstn;
 	
 	public static void main(String[] args) {
 		
@@ -44,20 +45,6 @@ public class StartUp {
 		 *************************************************/
 		
 		// tool bar listeners
-		createEmpyBtnLstn = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if ("e" == status) {
-					con.remove(empPanl);
-					custPanl = new CustomerPanel(null);
-					custPanl.addSaveEmployeeListener(saveEmpyLstn);
-					con.add(custPanl, BorderLayout.WEST);
-					frame.revalidate();
-					frame.repaint();
-					status = "c";
-				}
-			}
-		};
 		saveDataMenuLstn = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				writeDataInToDB();
@@ -71,13 +58,13 @@ public class StartUp {
 				Employee empy = empyRepo.select(eid, elist);
 				if ("e" == status) {
 					con.remove(empPanl);
+					empPanl = null;
 					custPanl = new CustomerPanel(empy);
 					custPanl.addSaveEmployeeListener(saveEmpyLstn);
 					con.add(custPanl, BorderLayout.WEST);
 					frame.revalidate();
 					frame.repaint();
 					status = "c";
-					//System.out.println("Halo!"+ elist.get("E002").getEid());
 				}
 			}
 		};
@@ -85,14 +72,26 @@ public class StartUp {
 			public void deleteEmpoyee(DeleteEmployeeEvent evt) {
 				String eid = evt.getEmployeeId();
 				empyRepo.delete(eid, elist);
-				System.out.println("#: " + elist.size());
+			}
+		};
+		crteEmpyLstn = new CreateEmployeeListener() {
+			public void createEmpoyee(CreateEmployeeEvent evt) {
+				if ("e" == status) {
+					con.remove(empPanl);
+					empPanl = null;
+					custPanl = new CustomerPanel(null);
+					custPanl.addSaveEmployeeListener(saveEmpyLstn);
+					con.add(custPanl, BorderLayout.WEST);
+					frame.revalidate();
+					frame.repaint();
+					status = "c";
+				}
 			}
 		};
 		
 		// employee-edit-page components listeners
 		saveEmpyLstn = new SaveEmployeeListener() {
 			public void saveEmpoyee(SaveEmployeeEvent evt) {
-				System.out.println("reach here: " );
 				Employee e = evt.getEmployee();
 				if (empyRepo.containsKey(e.getEid(), elist)) {
 					empyRepo.update(e.getEid(), e, elist);
@@ -102,50 +101,54 @@ public class StartUp {
 				}
 				// update the user interface
 				if ("c"==status) {
-					
 					con.remove(custPanl);
 					custPanl = null;
 					empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
 					empPanl.addEditEmployeeListener(editEmpyLstn);
 					empPanl.addDeleteEmployeeListener(delEmpyLstn);
+					empPanl.addCreateEmployeeListener(crteEmpyLstn);
 					con.add(empPanl, BorderLayout.WEST);
 					frame.revalidate();
 					frame.repaint();
 					status = "e";
 				}
-				//System.out.println("#: " + elist.size());
 			}
 		};
 
-		///////////////////////////////////////////////////////
+		/*************************************************
+		 * set up the visual components
+		 *************************************************/
 		
 		// root container
-		frame.setTitle("Customer Master");
+		frame.setTitle("Human Resource Management System");
 		frame.setBounds(120,60,1000,600);
 		con = frame.getContentPane();
 		
 		// tool bar
 		tb.setFloatable(false);
-		tb.add(createEmpyBtn);
 		tb.add(saveDBBtn);
-		createEmpyBtn.addActionListener(createEmpyBtnLstn);
+		tb.add(openDBBtn);
+		tb.add(printBtn);
 		saveDBBtn.addActionListener(saveDataMenuLstn);
 		con.add(tb, BorderLayout.NORTH);
 		
 		
-		///////////////////////////////////////////////////////
-	
+		/*************************************************
+		 * load data
+		 *************************************************/
 		
 		// load data from db
 		loadDataFromDB();
 		
-		// test against data validality
+		// test against data validity
 		Employee empy = empyRepo.select("E003", elist);
 		//Customer c = clist.get("1003");
 		System.out.println("Employee: " + empy.getFname());
 		// end
 		
-		///////////////////////////////////////////////////////
+		/*************************************************
+		 * initialize the default panel
+		 *************************************************/
 		
 		// create employee-list-page
 		empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
@@ -153,6 +156,7 @@ public class StartUp {
 		
 		empPanl.addEditEmployeeListener(editEmpyLstn);
 		empPanl.addDeleteEmployeeListener(delEmpyLstn);
+		empPanl.addCreateEmployeeListener(crteEmpyLstn);
 		con.add(empPanl, BorderLayout.WEST);
 		
 		
@@ -178,16 +182,11 @@ public class StartUp {
 		
 	}
 	
-	private static void initializeEmployeeListPanel() {
-		
-	}
-	
 	private static void loadDataFromDB() {
 		elist = (Employees)db.loadDatabase("customersdb.txt");
 	}
 	
 	private static void writeDataInToDB() {
-		//System.out.println("#: " + elist.size());
 		db.saveDatabase(elist,"customersdb.txt");
 	}
 }
@@ -202,17 +201,23 @@ class DB {
 	        ob = (Object)ois.readObject();
 	        ois.close();
 	        fis.close();
-	     }  catch(Exception e) {e.printStackTrace();}
-	     return ob;  
+	     }  
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	    return ob;  
 	}
 	public void saveDatabase(Object o, String f) {
 		try {
-		       FileOutputStream fos = new FileOutputStream(f);
-		       ObjectOutputStream oos = new ObjectOutputStream(fos);
-		       oos.writeObject(o);
-		       oos.flush();
-		       oos.close();
-		       fos.close();
-		} catch(Exception e ){e.printStackTrace();}
+			FileOutputStream fos = new FileOutputStream(f);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(o);
+			oos.flush();
+			oos.close();
+			fos.close();
+		} 
+		catch(Exception e ) {
+			e.printStackTrace();
+		}
 	}
 }

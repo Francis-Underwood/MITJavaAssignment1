@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Customer implements Serializable {
 	
+	private static final long serialVersionUID = 2367786313981532429L;
 	private String cid;
 	private String cname;
 	protected String paymentMethod;

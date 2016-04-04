@@ -5,6 +5,7 @@ import question1.*;
 
 public class SaveEmployeeEvent extends EventObject {
 	
+	private static final long serialVersionUID = 7914562408834137078L;
 	private Employee employee;
 	
 	public SaveEmployeeEvent(Object source, Employee empy) {

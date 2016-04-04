@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public abstract class EntityService<K, V> implements Serializable
 {
-	
+	private static final long serialVersionUID = -6610009302541981256L;
 	private final Hashtable<K, V> entitySet = new Hashtable<K, V>();
 	
 	public void add(K key, V val) {

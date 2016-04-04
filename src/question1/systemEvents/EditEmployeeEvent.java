@@ -4,6 +4,7 @@ import java.util.EventObject;
 
 public class EditEmployeeEvent extends EventObject {
 	
+	private static final long serialVersionUID = 3222342804606715140L;
 	private String employeeId;
 	
 	public EditEmployeeEvent(Object source, String eid) {

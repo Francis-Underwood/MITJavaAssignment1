@@ -1,59 +1,55 @@
 package question1;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import javax.swing.table.*;
 import layout.*;
 import question1.systemEvents.*;
 
 public class CustomerPanel extends JPanel implements ActionListener {
 	
+	private static final long serialVersionUID = 7135447414170251912L;
 	// component
-	protected JScrollPane scrollPane;
-	protected JTable table;
-	protected JLabel m_title;
-	
-	protected JPanel btnBar;
-	protected JButton deleteCustBtn = new JButton("delete");
-	protected JButton editCustBtn = new JButton("edit");
-	protected JButton createCustBtn = new JButton("create");
-	protected JButton saveCustBtn = new JButton("save");
-	
+	private  JScrollPane scrollPane;
+	private  JTable table;
+	private  JLabel m_title;
+	// buttons to interact with the table
+	private  JPanel btnBar;
+	private  JButton deleteCustBtn = new JButton("delete");
+	private  JButton editCustBtn = new JButton("edit");
+	private  JButton createCustBtn = new JButton("create");
+	private  JButton saveCustBtn = new JButton("save");
 	// employee property panel
-	protected JPanel empyPropsBar = new JPanel();
-	protected JTextField empEidTxtF = new JTextField();
-	protected JTextField empFNameTxtF = new JTextField();
-	protected JTextField empLNameTxtF = new JTextField();
-	
+	private  JPanel empyPropsBar = new JPanel();
+	private  JTextField empEidTxtF = new JTextField();
+	private  JTextField empFNameTxtF = new JTextField();
+	private  JTextField empLNameTxtF = new JTextField();
 	// customer property panel
-	protected JPanel custPropsBar = new JPanel();
-	protected JTextField custCidTxtF = new JTextField();
-	protected JTextField custNameTxtF = new JTextField();
+	private  JPanel custPropsBar = new JPanel();
+	private  JTextField custCidTxtF = new JTextField();
+	private  JTextField custNameTxtF = new JTextField();
+	private  JComboBox<String> payMethdCombox = new JComboBox<String>(
+																	new String[] {
+																		CustomerFactory.PAYMENTMETHOD_CASH, 
+																		CustomerFactory.PAYMENTMETHOD_CREDITCARD
+																	}
+																	);
+	// page navigation
+	private  JButton saveEmpyBtn = new JButton("save employee");
 	
-	//
-	protected JButton saveEmpyBtn = new JButton("save employee");
-	
-	//
-	ArrayList<Customer> custList = new ArrayList<Customer>();
-	
+	// other properties
+	private ArrayList<Customer> custList = new ArrayList<Customer>();
 	// keep track of selected row
-	protected int rowInd = -1;
-	
-	
-	protected CustomerTableModel customerModel;
-	
+	private  int rowInd = -1;
+	private  CustomerTableModel customerModel;
+	private CustomerFactory customerFactory = new CustomerFactory();
 	// custom event
 	private List<SaveEmployeeListener> saveEmpyListeners = new ArrayList<SaveEmployeeListener>();
 	
@@ -74,9 +70,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		}
 		else {}	// create new employee
 		
-		
-		//System.out.println("custList: " + custList.size());
-		
 		customerModel = new CustomerTableModel(custList);
 		
 		m_title = new JLabel(customerModel.getTitle());
@@ -84,32 +77,26 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		m_title.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(m_title);
 		
-		
 		// employee property panel
 		SpringLayout layout = new SpringLayout();
 		empyPropsBar.setLayout(layout);
 		empyPropsBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 		empyPropsBar.setPreferredSize(new Dimension(200, 100));
-		
 		empyPropsBar.add(new JLabel("Employee Id: "));
 		empEidTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empEidTxtF);
-		
 		empyPropsBar.add(new JLabel("Employee First Name: "));
 		empFNameTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empFNameTxtF);
-		
 		empyPropsBar.add(new JLabel("Employee Last Name: "));
 		empLNameTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empLNameTxtF);
-		
 		SpringUtilities.makeGrid(empyPropsBar,
                 3, 2, //rows, cols
                 5, 5, //initialX, initialY
                 5, 5);//xPad, yPad
-		
 		add(empyPropsBar);
-		
+		// employee property panel ends
 		
 		// customer list
 		table = new JTable(customerModel);
@@ -121,11 +108,9 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		scrollPane.getViewport().add(table);
 		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(scrollPane);
-		
 		btnBar = new JPanel();
 		btnBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		btnBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
 		deleteCustBtn.addActionListener(this);
 		editCustBtn.addActionListener(this);
 		createCustBtn.addActionListener(this);
@@ -136,8 +121,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		btnBar.add(saveCustBtn);
 		add(btnBar);
 		// customer list ends
-		
-		
 
 		// customer property panel
 		SpringLayout layout2 = new SpringLayout();
@@ -147,15 +130,16 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		custPropsBar.add(new JLabel("Customer Id: "));
 		custCidTxtF.setMaximumSize(new Dimension(20, 10));
 		custPropsBar.add(custCidTxtF);
-		custPropsBar.add(new JLabel("Customer Name: "));
+		custPropsBar.add(new JLabel("Customer name: "));
 		custNameTxtF.setMaximumSize(new Dimension(80, 10));
 		custPropsBar.add(custNameTxtF);
-		
+		custPropsBar.add(new JLabel("Payment method: "));
+		payMethdCombox.setMaximumSize(new Dimension(60, 10));
+		custPropsBar.add(payMethdCombox);
 		SpringUtilities.makeGrid(custPropsBar,
-                2, 2, //rows, cols
+                3, 2, //rows, cols
                 5, 5,
                 5, 5);
-		
 		add(custPropsBar);
 		// customer property panel ends
 		
@@ -172,43 +156,43 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent atnEvt) {
-		
 		if ("delete" == atnEvt.getActionCommand()) {
 			int rowInd = table.getSelectedRow();
-			String custKey = customerModel.getValueAt(rowInd, 0).toString();
 			customerModel.removeRow(rowInd);
 			this.rowInd = -1;
 		}
 		else if ("edit" == atnEvt.getActionCommand()) {
 			this.rowInd = table.getSelectedRow();
-			//String custKey = customerModel.getValueAt(rowInd, 0).toString();
-			Customer c = this.custList.get(this.rowInd); // should be syn with table model's list
+			Customer c = this.custList.get(this.rowInd); // should be synchronized with table model's list
 			custCidTxtF.setText(c.getCid());
 			custCidTxtF.setEditable(false);
 			custNameTxtF.setText(c.getCname());
+			payMethdCombox.setSelectedItem(c.getPaymentMethod());
+			payMethdCombox.setEnabled(false);
 		}
 		else if ("create" == atnEvt.getActionCommand()) {
 			this.rowInd = -1;
 			custCidTxtF.setText("");
 			custCidTxtF.setEditable(true);
 			custNameTxtF.setText("");
+			payMethdCombox.setEnabled(true);
 		}
 		else if ("save" == atnEvt.getActionCommand()) {
-			
 			if (-1!=this.rowInd) {	// edit
 				customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
 			}
 			else {	// create
-				customerModel.addRow(new CustomerPayWithCreditCard(custCidTxtF.getText(), custNameTxtF.getText()));
+				Customer c = customerFactory.createCustomer(custCidTxtF.getText(), custNameTxtF.getText(), 
+												payMethdCombox.getSelectedItem().toString());
+				customerModel.addRow(c);
 			}
-				
 			this.rowInd = -1;
 			custCidTxtF.setText("");
 			custCidTxtF.setEditable(true);
 			custNameTxtF.setText("");
+			payMethdCombox.setEnabled(true);
 		}
 		else if ("save employee" == atnEvt.getActionCommand()) {	// manage things differently, not locally
-			System.out.println("Bang");
 			if (empEidTxtF.isEditable()) {	// create new
 				Customers cs = new Customers();
 				for (Customer temp : this.custList) {
@@ -252,6 +236,8 @@ public class CustomerPanel extends JPanel implements ActionListener {
 
 class CustomerTableModel extends AbstractTableModel {
 	
+	private static final long serialVersionUID = -2724810585683461282L;
+
 	static final public String columnNames[] = {"Customer Id", "Customer Name", "Payment Method"};
 
 	protected ArrayList<Customer> custList;
@@ -292,14 +278,12 @@ class CustomerTableModel extends AbstractTableModel {
     	if (row < 0 || row >= getRowCount()) {
     		return "";
     	}
-
     	Customer c = this.custList.get(row);
     	switch (col) {
 	      case 0: return c.getCid();
 	      case 1: return c.getCname();
 	      case 2: return c.getPaymentMethod();
 	    }
-    	
     	return "";
     }
 	
