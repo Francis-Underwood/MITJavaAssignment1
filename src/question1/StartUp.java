@@ -126,6 +126,7 @@ public class StartUp {
 		
 		// tool bar
 		tb.setFloatable(false);
+		saveDBBtn.setToolTipText("Save the data into txt file");
 		tb.add(saveDBBtn);
 		tb.add(openDBBtn);
 		tb.add(printBtn);

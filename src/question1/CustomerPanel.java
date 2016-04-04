@@ -59,7 +59,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		
 		if (null != empy) {	// edit
 			if (null != empy.getCustomers()) {
-				System.out.println("here: ");
 				custList = new ArrayList<Customer>(empy.getCustomers().getAll());
 			}
 			else {}
