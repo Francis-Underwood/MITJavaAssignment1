@@ -31,6 +31,12 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	private  JTextField empEidTxtF = new JTextField();
 	private  JTextField empFNameTxtF = new JTextField();
 	private  JTextField empLNameTxtF = new JTextField();
+	private  JComboBox<String> empTypeCombox = new JComboBox<String>(
+													new String[] {
+															EmployeeFactory.SALESPERSON, 
+															EmployeeFactory.OTHERSTAFF
+													}
+												);
 	// customer property panel
 	private  JPanel custPropsBar = new JPanel();
 	private  JTextField custCidTxtF = new JTextField();
@@ -50,24 +56,39 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	private  int rowInd = -1;
 	private  CustomerTableModel customerModel;
 	private CustomerFactory customerFactory = new CustomerFactory();
+	private EmployeeFactory employeeFactory = new EmployeeFactory();
 	// custom event
 	private List<SaveEmployeeListener> saveEmpyListeners = new ArrayList<SaveEmployeeListener>();
+	private String empType = "";
 	
 	public CustomerPanel(Employee empy)
 	{
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		if (null != empy) {	// edit
-			if (null != empy.getCustomers()) {
-				custList = new ArrayList<Customer>(empy.getCustomers().getAll());
+			
+			if (empy instanceof SalesPerson) {	// sales
+				if (null != ((SalesPerson)empy).getCustomers()) {
+					custList = new ArrayList<Customer>(((SalesPerson)empy).getCustomers().getAll());
+					
+					empType = EmployeeFactory.SALESPERSON;
+				}
+				else {} 
 			}
-			else {}
+			else {	// other staff
+				empType = EmployeeFactory.OTHERSTAFF;
+			}
 			empEidTxtF.setText(empy.getEid());
 			empEidTxtF.setEditable(false);
 			empFNameTxtF.setText(empy.getFname());
 			empLNameTxtF.setText(empy.getLname());
+			empTypeCombox.setSelectedItem(empType);
+			empTypeCombox.setEnabled(false);
 		}
-		else {}	// create new employee
+		else {	// create new employee
+			empType = EmployeeFactory.SALESPERSON;
+			empTypeCombox.setSelectedItem(empType);
+		}	
 		
 		customerModel = new CustomerTableModel(custList);
 		
@@ -80,22 +101,35 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		SpringLayout layout = new SpringLayout();
 		empyPropsBar.setLayout(layout);
 		empyPropsBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		empyPropsBar.setPreferredSize(new Dimension(200, 100));
-		empyPropsBar.add(new JLabel("Employee Id: "));
+		empyPropsBar.setPreferredSize(new Dimension(200, 140));
+		empyPropsBar.add(new JLabel("employee Id: "));
 		empEidTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empEidTxtF);
-		empyPropsBar.add(new JLabel("Employee First Name: "));
+		empyPropsBar.add(new JLabel("employee first name: "));
 		empFNameTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empFNameTxtF);
-		empyPropsBar.add(new JLabel("Employee Last Name: "));
+		empyPropsBar.add(new JLabel("employee last name: "));
 		empLNameTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empLNameTxtF);
+		
+		empyPropsBar.add(new JLabel("employee type: "));
+		empTypeCombox.setMaximumSize(new Dimension(60, 10));
+		empyPropsBar.add(empTypeCombox);
+		
+		empyPropsBar.add(new JLabel("click to save: "));
+		// save the whole page, create an employee object and pass it to main
+		saveEmpyBtn.addActionListener(this);
+		empyPropsBar.add(saveEmpyBtn);
+		
 		SpringUtilities.makeGrid(empyPropsBar,
-                3, 2, //rows, cols
+                5, 2, //rows, cols
                 5, 5, //initialX, initialY
                 5, 5);//xPad, yPad
 		add(empyPropsBar);
 		// employee property panel ends
+		
+		
+		add(Box.createVerticalStrut(10));	
 		
 		// customer list
 		table = new JTable(customerModel);
@@ -106,7 +140,8 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		scrollPane.setMaximumSize(new Dimension(800, 220));
 		scrollPane.getViewport().add(table);
 		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-		add(scrollPane);
+		
+		// buttons to interact with customer table
 		btnBar = new JPanel();
 		btnBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		btnBar.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -118,7 +153,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		btnBar.add(editCustBtn);
 		btnBar.add(createCustBtn);
 		btnBar.add(saveCustBtn);
-		add(btnBar);
+		
 		// customer list ends
 
 		// customer property panel
@@ -139,13 +174,24 @@ public class CustomerPanel extends JPanel implements ActionListener {
                 3, 2, //rows, cols
                 5, 5,
                 5, 5);
-		add(custPropsBar);
+		
 		// customer property panel ends
 		
 		
-		// save the whole page, create an employee object and pass it to main
-		saveEmpyBtn.addActionListener(this);
-		add(saveEmpyBtn);
+		// add the components
+		if (empType == EmployeeFactory.OTHERSTAFF) {
+			
+		}
+		else if (empType == EmployeeFactory.SALESPERSON) {
+			add(scrollPane);
+			add(btnBar);
+			add(custPropsBar);
+			if (null == empy) { // create
+				// add listeners
+				empTypeCombox.addActionListener(this);
+			}
+		}
+		
 		
 		setBounds(0, 0, 800, 300);
 		
@@ -197,8 +243,8 @@ public class CustomerPanel extends JPanel implements ActionListener {
 				for (Customer temp : this.custList) {
 					cs.add(temp.getCid(), temp);
 				}
-				Employee e = new SalesPerson(empEidTxtF.getText(), empFNameTxtF.getText(), empLNameTxtF.getText());
-				e.setCustomers(cs);
+				Employee e = employeeFactory.createEmployee(empTypeCombox.getSelectedItem().toString(), empEidTxtF.getText(), 
+												empFNameTxtF.getText(), empLNameTxtF.getText(), cs);
 				// inform main
 				SaveEmployeeEvent see = new SaveEmployeeEvent(this, e);
 				goSaveEmployee(see);
@@ -209,15 +255,30 @@ public class CustomerPanel extends JPanel implements ActionListener {
 				for (Customer temp : this.custList) {
 					cs.add(temp.getCid(), temp);
 				}
-				Employee e = new SalesPerson(empEidTxtF.getText(), empFNameTxtF.getText(), empLNameTxtF.getText());
-				e.setCustomers(cs);
+				Employee e = employeeFactory.createEmployee(empTypeCombox.getSelectedItem().toString(), empEidTxtF.getText(), 
+													empFNameTxtF.getText(), empLNameTxtF.getText(), cs);
 				// inform main
 				SaveEmployeeEvent see = new SaveEmployeeEvent(this, e);
 				goSaveEmployee(see);
 			}
 		}
+		else if ("comboBoxChanged" == atnEvt.getActionCommand()) {
+			empType = empTypeCombox.getSelectedItem().toString();
+			if (EmployeeFactory.OTHERSTAFF == empType) {
+				remove(scrollPane);
+				remove(btnBar);
+				remove(custPropsBar);
+			}
+			else {
+				add(scrollPane);
+				add(btnBar);
+				add(custPropsBar);
+			}
+			revalidate();
+			repaint();
+		}
 		else {
-			System.out.println("should never reach here");
+			System.out.println("should never reach here: " + atnEvt.getActionCommand());
 		}
 	}
 	

@@ -8,20 +8,11 @@ public class Employee implements Serializable {
 	private String eid;
 	private String fname;
 	private String lname;
-	private Customers clist = new Customers();
 	
 	public Employee (String eid, String fname, String lname) {
 		this.eid = eid;
 		this.fname = fname;
 		this.lname = lname;
-	}
-	
-	public void setCustomers (Customers clist) {
-		this.clist = clist;
-	}
-	
-	public Customers getCustomers () {
-		return clist;
 	}
 	
 	public String getEid() {

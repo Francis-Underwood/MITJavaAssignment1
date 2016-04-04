@@ -54,8 +54,12 @@ public class GenerateFakeDog {
 		// test
 		Employee e = elist.get("E002");
 		System.out.println("Employee: " + e.getFname() + " " + e.getLname());
-		Customer c = e.getCustomers().get("C0006");
-		System.out.println("Customer: " + c.getCname() + ", pay with " + c.getPaymentMethod());
+		if (e instanceof SalesPerson) {
+			Customer c = ((SalesPerson)e).getCustomers().get("C0006");
+			System.out.println("Customer: " + c.getCname() + ", pay with " + c.getPaymentMethod());
+		}
+		
+		
 		// test ends
 		
 		DB db = new DB();

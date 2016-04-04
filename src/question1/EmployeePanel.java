@@ -170,7 +170,13 @@ class EmployeeTableModel extends AbstractTableModel {
     		case 0: return e.getEid();
     		case 1: return e.getFname();
     		case 2: return e.getLname();
-    		case 3: return e.getCustomers().size();
+    		case 3: 
+    			if (e instanceof SalesPerson) {
+    				return ((SalesPerson)e).getCustomers().size();
+    			}
+    			else {
+    				return "N/A";
+    			}
 	    }
     	return "";
     }
