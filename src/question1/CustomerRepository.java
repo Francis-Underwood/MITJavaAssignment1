@@ -30,4 +30,8 @@ public class CustomerRepository implements Repository<String, Customer> {
 		return new CustomerRepository();	
 	}
 	
+	public boolean containsKey(String key, EntityService<String, Customer> db) {
+		return db.containsKey(key);
+	}
+	
 }

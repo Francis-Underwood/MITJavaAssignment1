@@ -2,11 +2,11 @@ package question1.systemEvents;
 
 import java.util.EventObject;
 
-public class EditEmployeeEvent extends EventObject {
+public class DeleteEmployeeEvent extends EventObject {
 	
 	private String employeeId;
 	
-	public EditEmployeeEvent(Object source, String eid) {
+	public DeleteEmployeeEvent(Object source, String eid) {
 	    super(source);
 	    this.employeeId = eid;
 	}
@@ -16,6 +16,3 @@ public class EditEmployeeEvent extends EventObject {
 	}
 	
 }
-
-
-

@@ -16,224 +16,180 @@ public class StartUp {
 
 	private final static String feelNLook = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 	private static String status = "e";
-	private static JFrame frame;
+	// components
+	private static JFrame frame = new JFrame();
 	private static Container con;
 	private static EmployeePanel empPanl;
 	private static CustomerPanel custPanl;
+	private static JToolBar tb = new JToolBar();;
+	private static JButton createEmpyBtn = new JButton(new ImageIcon("img/Insert24.gif"));
+	private static JButton saveDBBtn = new JButton(new ImageIcon("img/Save24.gif"));
+	
+	// data access
+	private static DB db = new DB();
 	private static Employees elist;
 	private static Repository<String, Employee> empyRepo = EmployeeRepository.factory();
 	
+	// listeners
+	private static ActionListener saveDataMenuLstn;
+	private static ActionListener createEmpyBtnLstn;
+	private static EditEmployeeListener editEmpyLstn;
+	private static DeleteEmployeeListener delEmpyLstn;
+	private static SaveEmployeeListener saveEmpyLstn;
+	
 	public static void main(String[] args) {
 		
-		frame = new JFrame();
-		frame.setTitle("Customer Master");
-		frame.setBounds(10,10,1000,600);
-		//frame.setSize(300, 200);
-		con = frame.getContentPane();
+		/*************************************************
+		 * create listeners
+		 *************************************************/
 		
-		// tool bar
-		JToolBar tb = new JToolBar();
-		tb.setFloatable(false);
-		
-		JButton bt = new JButton(new ImageIcon("img/Insert24.gif"));
-		tb.add(bt);
-		
-		ActionListener createBtnLstn = new ActionListener() {
+		// tool bar listeners
+		createEmpyBtnLstn = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				if ("e" == status) {
-					//System.out.println("Halo!");
 					con.remove(empPanl);
 					custPanl = new CustomerPanel(null);
-					con.add(custPanl);
+					custPanl.addSaveEmployeeListener(saveEmpyLstn);
+					con.add(custPanl, BorderLayout.WEST);
+					frame.revalidate();
+					frame.repaint();
+					status = "c";
+				}
+			}
+		};
+		saveDataMenuLstn = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				writeDataInToDB();
+			}
+		};
+		
+		// employee-list-page components listeners
+		editEmpyLstn = new EditEmployeeListener() {
+			public void editEmpoyee(EditEmployeeEvent evt) {
+				String eid = evt.getEmployeeId();
+				Employee empy = empyRepo.select(eid, elist);
+				if ("e" == status) {
+					con.remove(empPanl);
+					custPanl = new CustomerPanel(empy);
+					custPanl.addSaveEmployeeListener(saveEmpyLstn);
+					con.add(custPanl, BorderLayout.WEST);
 					frame.revalidate();
 					frame.repaint();
 					status = "c";
 					//System.out.println("Halo!"+ elist.get("E002").getEid());
 				}
-				/*
+			}
+		};
+		delEmpyLstn = new DeleteEmployeeListener() {
+			public void deleteEmpoyee(DeleteEmployeeEvent evt) {
+				String eid = evt.getEmployeeId();
+				empyRepo.delete(eid, elist);
+				System.out.println("#: " + elist.size());
+			}
+		};
+		
+		// employee-edit-page components listeners
+		saveEmpyLstn = new SaveEmployeeListener() {
+			public void saveEmpoyee(SaveEmployeeEvent evt) {
+				System.out.println("reach here: " );
+				Employee e = evt.getEmployee();
+				if (empyRepo.containsKey(e.getEid(), elist)) {
+					empyRepo.update(e.getEid(), e, elist);
+				}
 				else {
+					empyRepo.add(e.getEid(), e, elist);
+				}
+				// update the user interface
+				if ("c"==status) {
+					
 					con.remove(custPanl);
 					custPanl = null;
+					empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
+					empPanl.addEditEmployeeListener(editEmpyLstn);
+					empPanl.addDeleteEmployeeListener(delEmpyLstn);
 					con.add(empPanl, BorderLayout.WEST);
 					frame.revalidate();
 					frame.repaint();
 					status = "e";
 				}
-				*/
+				//System.out.println("#: " + elist.size());
 			}
 		};
+
+		///////////////////////////////////////////////////////
 		
-		bt.addActionListener(createBtnLstn);
+		// root container
+		frame.setTitle("Customer Master");
+		frame.setBounds(120,60,1000,600);
+		con = frame.getContentPane();
 		
+		// tool bar
+		tb.setFloatable(false);
+		tb.add(createEmpyBtn);
+		tb.add(saveDBBtn);
+		createEmpyBtn.addActionListener(createEmpyBtnLstn);
+		saveDBBtn.addActionListener(saveDataMenuLstn);
 		con.add(tb, BorderLayout.NORTH);
 		
-		/////////////////////////////
+		
+		///////////////////////////////////////////////////////
 	
 		
+		// load data from db
+		loadDataFromDB();
 		
-		/////////////////////////////
-		
-		
-		
-		
-		/*
-		EmployeePanel empPanl = new EmployeePanel(new ArrayList<Employee>());
-		
-		// generate init test data
-		Employees elist = new Employees();
-		
-		// first employ
-		SalesPerson sp1 = new SalesPerson("E001", "Oliver", "Queen");
-		
-		Customers clist1 = new Customers();
-		clist1.add("C0001", new CustomerPayCash("C0001", "Merlyn"));
-		clist1.add("C0002", new CustomerPayWithCreditCard("C0002", "Count Vertigo"));
-		clist1.add("C0003", new CustomerPayCash("C0003", "Brick"));
-		
-		sp1.setCustomers(clist1);
-		
-		// put it into hashtable
-		elist.add(sp1.getEid(), sp1);
-		
-		
-		// second employ
-		SalesPerson sp2 = new SalesPerson("E002", "Hal", "Jordan");
-		
-		Customers clist2 = new Customers();
-		clist2.add("C0004", new CustomerPayCash("C0004", "Sky Pirate"));
-		clist2.add("C0005", new CustomerPayCash("C0005", "Knodar"));
-		clist2.add("C0006", new CustomerPayCash("C0006", "Vandal Savage"));
-		
-		sp2.setCustomers(clist2);
-		
-		// put it into hashtable
-		elist.add(sp2.getEid(), sp2);
-		
-		
-		// third employ
-		SalesPerson sp3 = new SalesPerson("E003", "Jay", "Garrick");
-		
-		Customers clist3 = new Customers();
-		clist3.add("C0007", new CustomerPayWithCreditCard("C0007", "Peek-a-Boo"));
-		clist3.add("C0008", new CustomerPayWithCreditCard("C0008", "Magenta"));
-		clist3.add("C0009", new CustomerPayWithCreditCard("C0009", "Savitar"));
-		
-		sp3.setCustomers(clist3);
-		
-		// put it into hashtable
-		elist.add(sp3.getEid(), sp3);
-		
-		
-		
-		// third employ
-		SalesPerson sp4 = new SalesPerson("E004", "Barry", "Allen");
-		
-		Customers clist4 = new Customers();
-		clist4.add("C0010", new CustomerPayWithCreditCard("C0010", "Spectro"));
-		clist4.add("C0011", new CustomerPayWithCreditCard("C0011", "Imperiex"));
-		clist4.add("C0012", new CustomerPayWithCreditCard("C0012", "Marvin Noronsa"));
-		
-		sp4.setCustomers(clist4);
-		
-		// put it into hashtable
-		elist.add(sp4.getEid(), sp4);
-		
-		
-		
-		Employee e = elist.get("E002");
-		System.out.println("Employee: " + e.getFname() + " " + e.getLname());
-		
-		Customer c = e.getCustomers().get("C0006");
-		System.out.println("Customer: " + c.getCname() + ", pay with " + c.getPaymentMethod());
-		
-		
-		DB db = new DB();
-		db.saveDatabase(elist,"customersdb.txt");
-		
-		*/
-		
-		
-		/////////////////////////
-		
-		
-		
-		/**/
-		DB db = new DB();
-		elist = (Employees)db.loadDatabase("customersdb.txt");
-		
-		
+		// test against data validality
 		Employee empy = empyRepo.select("E003", elist);
-		
-		
 		//Customer c = clist.get("1003");
 		System.out.println("Employee: " + empy.getFname());
+		// end
 		
-		ArrayList<Employee> empList = new ArrayList<Employee>(empyRepo.all(elist));	// new copies of the employee, change on table model won't affect the original ones
+		///////////////////////////////////////////////////////
 		
-		empPanl = new EmployeePanel(empList);
-		
-		EditEmployeeListener editEmpyLstn = new EditEmployeeListener() {
-			public void editEmpoyee(EditEmployeeEvent evt) {
-				String eid = evt.getEmployeeId();
-				Employee empy = empyRepo.select(eid, elist);
-				if ("e" == status) {
-					System.out.println("Halo! Halo! Halo!" + empy);
-					con.remove(empPanl);
-					custPanl = new CustomerPanel(empy);
-					con.add(custPanl);
-					frame.revalidate();
-					frame.repaint();
-					status = "c";
-					//System.out.println("Halo!"+ elist.get("E002").getEid());
-				}
-			}
-		};
+		// create employee-list-page
+		empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
+		// new copies of the employee, change on table model won't affect the original ones
 		
 		empPanl.addEditEmployeeListener(editEmpyLstn);
-		
-		
-		
-		
-		
-		/**/
+		empPanl.addDeleteEmployeeListener(delEmpyLstn);
 		con.add(empPanl, BorderLayout.WEST);
 		
 		
 		// set style
-		try 
-		{
+		try {
 			UIManager.setLookAndFeel(feelNLook);
 			SwingUtilities.updateComponentTreeUI(frame);
 		} 
-		catch (UnsupportedLookAndFeelException ex1) 
-		{
+		catch (UnsupportedLookAndFeelException ex1) {
 		      System.err.println("Unsupported LookAndFeel: " + feelNLook);
 	    }
-	    catch (ClassNotFoundException ex2) 
-		{
+	    catch (ClassNotFoundException ex2) {
 	      System.err.println("LookAndFeel class not found: " + feelNLook);
 	    }
-	    catch (InstantiationException ex3) 
-		{
+	    catch (InstantiationException ex3) {
 	      System.err.println("Could not load LookAndFeel: " + feelNLook);
 	    }
-	    catch (IllegalAccessException ex4) 
-		{
+	    catch (IllegalAccessException ex4) {
 	      System.err.println("Cannot use LookAndFeel: " + feelNLook);
 	    }
 		
 		frame.setVisible(true);
-		//System.out.println("X: " + empPanl.getX());
-		//System.out.println("Y: " + empPanl.getY());
-		
 		
 	}
 	
+	private static void initializeEmployeeListPanel() {
+		
+	}
 	
+	private static void loadDataFromDB() {
+		elist = (Employees)db.loadDatabase("customersdb.txt");
+	}
 	
-	
-
+	private static void writeDataInToDB() {
+		//System.out.println("#: " + elist.size());
+		db.saveDatabase(elist,"customersdb.txt");
+	}
 }
 
 

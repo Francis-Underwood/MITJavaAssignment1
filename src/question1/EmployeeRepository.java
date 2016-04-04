@@ -30,4 +30,8 @@ public class EmployeeRepository implements Repository<String, Employee> {
 		return new EmployeeRepository();	
 	}
 	
+	public boolean containsKey(String key, EntityService<String, Employee> db) {
+		return db.containsKey(key);
+	}
+	
 }

@@ -19,6 +19,7 @@ import question1.systemEvents.*;
 
 public class EmployeePanel extends JPanel implements ActionListener {
 	
+	private ArrayList<Employee> empList;
 	protected JScrollPane scrollPane;
 	protected JTable table;
 	protected JLabel m_title;
@@ -28,9 +29,11 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	protected EmployeeTableModel employeeModel;
 	
 	// custom event
-	private List<EditEmployeeListener> listeners = new ArrayList<EditEmployeeListener>();
+	private List<EditEmployeeListener> editEmpyListeners = new ArrayList<EditEmployeeListener>();
+	private List<DeleteEmployeeListener> delEmpyListeners = new ArrayList<DeleteEmployeeListener>();
 	
 	public EmployeePanel (ArrayList<Employee> empList) {
+		this.empList = empList;
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		
@@ -71,24 +74,22 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent atnEvt)	{
-		if ("delete" == atnEvt.getActionCommand())
-		{
+		if ("delete" == atnEvt.getActionCommand()) {
 			int rowInd = table.getSelectedRow();
 			String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
-			
 			employeeModel.removeRow(rowInd);
-			// inform main
+			//  inform main
+			DeleteEmployeeEvent dee = new DeleteEmployeeEvent(this, empyKey);
+			goDeleteEmployee(dee);
 		}
-		else if ("edit" == atnEvt.getActionCommand())
-		{
+		else if ("edit" == atnEvt.getActionCommand()) {
 			int rowInd = table.getSelectedRow();
 			String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
 			// inform main
 			EditEmployeeEvent eee = new EditEmployeeEvent(this, empyKey);
 			goEditEmployee(eee);
 		}
-		else
-		{
+		else {
 			System.out.println("should never reach here");
 		}
 	}
@@ -98,12 +99,30 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	}
 	
 	public void addEditEmployeeListener(EditEmployeeListener toAdd) {
-        listeners.add(toAdd);
+        editEmpyListeners.add(toAdd);
+    }
+	
+	public void removeEditEmployeeListener(EditEmployeeListener toRemove) {
+        editEmpyListeners.remove(toRemove);
+    }
+	
+	public void addDeleteEmployeeListener(DeleteEmployeeListener toAdd) {
+		delEmpyListeners.add(toAdd);
+    }
+	
+	public void removeDeleteEmployeeListener(DeleteEmployeeListener toRemove) {
+		delEmpyListeners.remove(toRemove);
     }
 	
 	public void goEditEmployee(EditEmployeeEvent eeEvt) {
-		for (EditEmployeeListener hl : listeners) {
+		for (EditEmployeeListener hl : editEmpyListeners) {
             hl.editEmpoyee(eeEvt);
+		}
+	}
+	
+	public void goDeleteEmployee(DeleteEmployeeEvent deEvt) {
+		for (DeleteEmployeeListener hl : delEmpyListeners) {
+            hl.deleteEmpoyee(deEvt);
 		}
 	}
 	
@@ -136,14 +155,12 @@ class EmployeeTableModel extends AbstractTableModel {
 	 
 	@Override
     public Object getValueAt(int row, int col) {
-    	if (row < 0 || row >= getRowCount()) 
-    	{
+    	if (row < 0 || row >= getRowCount()) {
     	      return "";
     	}
 
     	Employee e = this.empList.get(row);
-    	switch (col) 
-    	{
+    	switch (col) {
 	      case 0: return e.getEid();
 	      case 1: return e.getFname();
 	      case 2: return e.getLname();
