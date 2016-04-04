@@ -13,14 +13,14 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = -1289644983315427833L;
 	private ArrayList<Employee> empList;
-	protected JScrollPane scrollPane;
-	protected JTable table;
-	protected JLabel m_title;
-	protected JPanel btnBar = new JPanel();
-	protected JButton deleteBtn = new JButton("delete");
-	protected JButton editBtn = new JButton("edit");
-	protected JButton createBtn = new JButton("create");
-	protected EmployeeTableModel employeeModel;
+	private JScrollPane scrollPane;
+	private JTable table;
+	private JLabel m_title;
+	private JPanel btnBar = new JPanel();
+	private JButton deleteBtn = new JButton("delete");
+	private JButton editBtn = new JButton("edit");
+	private JButton createBtn = new JButton("create");
+	private EmployeeTableModel employeeModel;
 	
 	// custom event
 	private List<EditEmployeeListener> editEmpyListeners = new ArrayList<EditEmployeeListener>();
@@ -137,7 +137,7 @@ public class EmployeePanel extends JPanel implements ActionListener {
 class EmployeeTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 2735947194297668970L;
-	static final public String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", 
+	static final public String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", "Category",
 												"# of Customers"};
 	protected ArrayList<Employee> empList;
 	
@@ -170,13 +170,8 @@ class EmployeeTableModel extends AbstractTableModel {
     		case 0: return e.getEid();
     		case 1: return e.getFname();
     		case 2: return e.getLname();
-    		case 3: 
-    			if (e instanceof SalesPerson) {
-    				return ((SalesPerson)e).getCustomers().size();
-    			}
-    			else {
-    				return "N/A";
-    			}
+    		case 3: return (e instanceof SalesPerson)?EmployeeFactory.SALESPERSON:EmployeeFactory.OTHERSTAFF;
+    		case 4: return (e instanceof SalesPerson)?((SalesPerson)e).getCustomers().size():"N/A";
 	    }
     	return "";
     }

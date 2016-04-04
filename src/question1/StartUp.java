@@ -72,6 +72,8 @@ public class StartUp {
 			public void deleteEmpoyee(DeleteEmployeeEvent evt) {
 				String eid = evt.getEmployeeId();
 				empyRepo.delete(eid, elist);
+				//elist.delete(eid);
+				System.out.println("#: " + elist.size());
 			}
 		};
 		crteEmpyLstn = new CreateEmployeeListener() {
@@ -121,7 +123,7 @@ public class StartUp {
 		
 		// root container
 		frame.setTitle("Human Resource Management System");
-		frame.setBounds(120,60,1000,600);
+		frame.setBounds(120,60,900,600);
 		con = frame.getContentPane();
 		
 		// tool bar
@@ -142,9 +144,13 @@ public class StartUp {
 		loadDataFromDB();
 		
 		// test against data validity
+		/*
 		Employee empy = empyRepo.select("E003", elist);
-		//Customer c = clist.get("1003");
-		System.out.println("Employee: " + empy.getFname());
+		if (null != empy) {
+			//Customer c = clist.get("1003");
+			System.out.println("Employee: " + empy.getFname());
+		}
+		*/
 		// end
 		
 		/*************************************************

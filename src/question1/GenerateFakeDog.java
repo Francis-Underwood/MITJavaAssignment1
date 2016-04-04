@@ -30,13 +30,7 @@ public class GenerateFakeDog {
 		elist.add(sp2.getEid(), sp2);
 		
 		// third employee
-		SalesPerson sp3 = new SalesPerson("E003", "Jay", "Garrick");
-		// its customers
-		Customers clist3 = new Customers();
-		clist3.add("C0007", new CustomerPayWithCreditCard("C0007", "Peek-a-Boo"));
-		clist3.add("C0008", new CustomerPayWithCreditCard("C0008", "Magenta"));
-		clist3.add("C0009", new CustomerPayWithCreditCard("C0009", "Savitar"));
-		sp3.setCustomers(clist3);
+		OtherStaff sp3 = new OtherStaff("E003", "Jay", "Garrick");
 		// put it into hashtable
 		elist.add(sp3.getEid(), sp3);
 		

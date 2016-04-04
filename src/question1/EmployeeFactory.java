@@ -1,5 +1,6 @@
 package question1;
 
+// factory pattern
 public final class EmployeeFactory {
 	public static final String SALESPERSON = "sales";
 	public static final String OTHERSTAFF = "other staff";

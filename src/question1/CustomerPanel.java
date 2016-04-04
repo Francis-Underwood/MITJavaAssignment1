@@ -70,7 +70,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			if (empy instanceof SalesPerson) {	// sales
 				if (null != ((SalesPerson)empy).getCustomers()) {
 					custList = new ArrayList<Customer>(((SalesPerson)empy).getCustomers().getAll());
-					
 					empType = EmployeeFactory.SALESPERSON;
 				}
 				else {} 
@@ -250,7 +249,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 				goSaveEmployee(see);
 			}
 			else {	// edit
-				//System.out.println("#: " + this.custList.size());
 				Customers cs = new Customers();
 				for (Customer temp : this.custList) {
 					cs.add(temp.getCid(), temp);
@@ -294,6 +292,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	
 }
 
+
 class CustomerTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = -2724810585683461282L;
@@ -307,15 +306,15 @@ class CustomerTableModel extends AbstractTableModel {
 	}
 	
 	@Override
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		if (rowIndex < 0 || rowIndex >= getRowCount()) {
+	public void setValueAt(Object val, int row, int col) {
+		if (row < 0 || row >= getRowCount()) {
     		return;
     	}
-		Customer c = this.custList.get(rowIndex);
-		switch (columnIndex) {
-	      case 1: c.setCname(aValue.toString());
+		Customer c = this.custList.get(row);
+		switch (col) {
+	      case 1: c.setCname(val.toString());
 	    }
-		this.fireTableCellUpdated(rowIndex, columnIndex);
+		this.fireTableCellUpdated(row, col);
 	}
 	
 	@Override

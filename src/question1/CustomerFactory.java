@@ -1,5 +1,6 @@
 package question1;
 
+//factory pattern
 public final class CustomerFactory {
 	public static final String PAYMENTMETHOD_CASH = "cash";
 	public static final String PAYMENTMETHOD_CREDITCARD = "credit card";

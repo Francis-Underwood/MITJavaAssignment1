@@ -4,6 +4,8 @@ import java.util.*;
 
 public class EmployeeRepository implements Repository<String, Employee> {
 	
+	private static EmployeeRepository employeeRepository;	//singleton pattern
+	
 	private EmployeeRepository() {}
 	
 	public Employee select(String key, EntityService<String, Employee> db) {
@@ -25,13 +27,17 @@ public class EmployeeRepository implements Repository<String, Employee> {
 	public ArrayList<Employee> all(EntityService<String, Employee> db) {
 		return db.getAll();
 	}
-	
-	public static Repository<String, Employee> factory() {
-		return new EmployeeRepository();	
-	}
-	
+
 	public boolean containsKey(String key, EntityService<String, Employee> db) {
 		return db.containsKey(key);
+	}
+	
+	public static Repository<String, Employee> factory() {
+		if (null==employeeRepository) {
+			employeeRepository = new EmployeeRepository();
+		}
+		else {}
+		return employeeRepository;
 	}
 	
 }
