@@ -56,7 +56,7 @@ public class GenerateFakeDog {
 		
 		// test ends
 		
-		DB db = new DB();
+		Database db = new Database();
 		db.saveDatabase(elist,"customersdb.txt");
 		
 	}

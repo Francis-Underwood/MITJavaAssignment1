@@ -4,10 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.*;
 import question1.systemEvents.*;
@@ -21,14 +17,14 @@ public class StartUp {
 	private static Container con;
 	private static EmployeePanel empPanl;
 	private static CustomerPanel custPanl;
-	private static JToolBar tb = new JToolBar();
+	private static JToolBar toolBar = new JToolBar();
 	private static JButton saveDBBtn = new JButton(new ImageIcon("img/Save24.gif"));
 	private static JButton openDBBtn = new JButton(new ImageIcon("img/Open24.gif"));
 	private static JButton printBtn = new JButton(new ImageIcon("img/Print24.gif"));
 	private static JButton goBackBtn = new JButton(new ImageIcon("img/Exit24.gif"));
 	
 	// data access
-	private static DB db = new DB();
+	private static Database db = new Database();
 	private static Employees elist;
 	private static Repository<String, Employee> empyRepo = EmployeeRepository.factory();
 	
@@ -118,17 +114,17 @@ public class StartUp {
 		con = frame.getContentPane();
 		
 		// tool bar
-		tb.setFloatable(false);
+		toolBar.setFloatable(false);
 		saveDBBtn.setToolTipText("save the data into txt file");
-		tb.add(saveDBBtn);
-		tb.add(openDBBtn);
-		tb.add(printBtn);
+		toolBar.add(saveDBBtn);
+		toolBar.add(openDBBtn);
+		toolBar.add(printBtn);
 		goBackBtn.setToolTipText("go back to main page");
-		tb.add(goBackBtn);
+		toolBar.add(goBackBtn);
 		saveDBBtn.addActionListener(saveDataMenuLstn);
 		goBackBtn.addActionListener(goBackMenuLstn);
 		goBackBtn.setEnabled(false);
-		con.add(tb, BorderLayout.NORTH);
+		con.add(toolBar, BorderLayout.NORTH);
 		
 		
 		/*************************************************
@@ -180,6 +176,9 @@ public class StartUp {
 	      System.err.println("Cannot use LookAndFeel: " + feelNLook);
 	    }
 		
+		UIManager.put("OptionPane.okButtonText", "OK");
+		UIManager.put("OptionPane.cancelButtonText", "Cancel");
+		
 		frame.setVisible(true);
 		
 	}
@@ -222,36 +221,5 @@ public class StartUp {
 		JInternalFrame intframe = pane.createInternalFrame(frame.getLayeredPane(), "Notice");
 		frame.getLayeredPane().add(intframe);
 		intframe.show();
-	}
-}
-
-
-class DB {
-	public Object loadDatabase(String f) {
-		Object ob = null;
-		try {
-	        FileInputStream fis = new FileInputStream(f);
-	        ObjectInputStream ois = new ObjectInputStream(fis);
-	        ob = (Object)ois.readObject();
-	        ois.close();
-	        fis.close();
-	     }  
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-	    return ob;  
-	}
-	public void saveDatabase(Object o, String f) {
-		try {
-			FileOutputStream fos = new FileOutputStream(f);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(o);
-			oos.flush();
-			oos.close();
-			fos.close();
-		} 
-		catch(Exception e ) {
-			e.printStackTrace();
-		}
 	}
 }

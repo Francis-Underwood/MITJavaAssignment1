@@ -90,45 +90,45 @@ public class EmployeePanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	public void addEditEmployeeListener(EditEmployeeListener toAdd) {
-        editEmpyListeners.add(toAdd);
+	public void addEditEmployeeListener(EditEmployeeListener eeLtner) {
+        editEmpyListeners.add(eeLtner);
     }
 	
-	public void removeEditEmployeeListener(EditEmployeeListener toRemove) {
-        editEmpyListeners.remove(toRemove);
+	public void removeEditEmployeeListener(EditEmployeeListener eeLtner) {
+        editEmpyListeners.remove(eeLtner);
     }
 	
-	public void addDeleteEmployeeListener(DeleteEmployeeListener toAdd) {
-		delEmpyListeners.add(toAdd);
+	public void addDeleteEmployeeListener(DeleteEmployeeListener deLtner) {
+		delEmpyListeners.add(deLtner);
     }
 	
-	public void removeDeleteEmployeeListener(DeleteEmployeeListener toRemove) {
-		delEmpyListeners.remove(toRemove);
+	public void removeDeleteEmployeeListener(DeleteEmployeeListener deLtner) {
+		delEmpyListeners.remove(deLtner);
     }
 	
-	public void addCreateEmployeeListener(CreateEmployeeListener toAdd) {
-        crteEmpyListeners.add(toAdd);
+	public void addCreateEmployeeListener(CreateEmployeeListener ceLtner) {
+        crteEmpyListeners.add(ceLtner);
     }
 	
 	public void removeCreateEmployeeListener(CreateEmployeeListener toRemove) {
         crteEmpyListeners.remove(toRemove);
     }
 	
-	public void goEditEmployee(EditEmployeeEvent eeEvt) {
+	private void goEditEmployee(EditEmployeeEvent eeEvt) {
 		for (EditEmployeeListener hl : editEmpyListeners) {
             hl.editEmpoyee(eeEvt);
 		}
 	}
 	
-	public void goDeleteEmployee(DeleteEmployeeEvent deEvt) {
+	private void goDeleteEmployee(DeleteEmployeeEvent deEvt) {
 		for (DeleteEmployeeListener hl : delEmpyListeners) {
             hl.deleteEmpoyee(deEvt);
 		}
 	}
 	
-	public void goCreateEmployee(CreateEmployeeEvent deEvt) {
+	private void goCreateEmployee(CreateEmployeeEvent ceEvt) {
 		for (CreateEmployeeListener hl : crteEmpyListeners) {
-            hl.createEmpoyee(deEvt);
+            hl.createEmpoyee(ceEvt);
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class EmployeePanel extends JPanel implements ActionListener {
 class EmployeeTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 2735947194297668970L;
-	static final public String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", "Category",
+	private static final String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", "Category",
 												"# of Customers"};
 	protected ArrayList<Employee> empList;
 	

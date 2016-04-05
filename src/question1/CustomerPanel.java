@@ -265,11 +265,11 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	public void addSaveEmployeeListener(SaveEmployeeListener toAdd) {
-		saveEmpyListeners.add(toAdd);
+	public void addSaveEmployeeListener(SaveEmployeeListener seLtner) {
+		saveEmpyListeners.add(seLtner);
     }
 	
-	public void goSaveEmployee(SaveEmployeeEvent seEvt) {
+	private void goSaveEmployee(SaveEmployeeEvent seEvt) {
 		for (SaveEmployeeListener hl : saveEmpyListeners) {
             hl.saveEmpoyee(seEvt);
 		}
@@ -282,9 +282,9 @@ class CustomerTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = -2724810585683461282L;
 
-	static final public String columnNames[] = {"Customer Id", "Customer Name", "Payment Method"};
+	private static final String columnNames[] = {"Customer Id", "Customer Name", "Payment Method"};
 
-	protected ArrayList<Customer> custList;
+	private ArrayList<Customer> custList;
 
 	public CustomerTableModel(ArrayList<Customer> custList) {
 	    this.custList = custList;
