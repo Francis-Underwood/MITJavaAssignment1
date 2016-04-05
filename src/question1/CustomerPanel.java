@@ -45,6 +45,11 @@ public class CustomerPanel extends JPanel implements ActionListener {
 																		CustomerFactory.PAYMENTMETHOD_CREDITCARD
 																	}
 																	);
+	private Object[] customerEditCtrls = {
+										    "Customer Id:", custCidTxtF,
+										    "Customer name:", custNameTxtF,
+										    "Payment method:", payMethdCombox
+										};
 	// page navigation
 	private  JButton saveEmpyBtn = new JButton("save employee");
 	
@@ -108,11 +113,9 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		empyPropsBar.add(new JLabel("employee last name: "));
 		empLNameTxtF.setMaximumSize(new Dimension(20, 10));
 		empyPropsBar.add(empLNameTxtF);
-		
 		empyPropsBar.add(new JLabel("employee type: "));
 		empTypeCombox.setMaximumSize(new Dimension(60, 10));
 		empyPropsBar.add(empTypeCombox);
-		
 		empyPropsBar.add(new JLabel("click to save: "));
 		// save the whole page, create an employee object and pass it to main
 		saveEmpyBtn.addActionListener(this);
@@ -186,45 +189,26 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			custNameTxtF.setText(c.getCname());
 			payMethdCombox.setSelectedItem(c.getPaymentMethod());
 			payMethdCombox.setEnabled(false);
-			Object[] message = {
-				    "Customer Id:", custCidTxtF,
-				    "Customer name:", custNameTxtF,
-				    "Payment method:", payMethdCombox
-				};
-			int option = JOptionPane.showConfirmDialog(null, message, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
+			int option = JOptionPane.showConfirmDialog(null, customerEditCtrls, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
 			if (option == JOptionPane.OK_OPTION) {
 				customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
 			} else {}
 			this.rowInd = -1;
-			custCidTxtF.setText("");
-			custCidTxtF.setEditable(true);
-			custNameTxtF.setText("");
-			payMethdCombox.setEnabled(true);
+			resetCustEditCtrls();
 		}
 		else if ("create" == atnEvt.getActionCommand()) {
 			this.rowInd = -1;
-			custCidTxtF.setText("");
-			custCidTxtF.setEditable(true);
-			custNameTxtF.setText("");
-			payMethdCombox.setEnabled(true);
-			Object[] message = {
-				    "Customer Id:", custCidTxtF,
-				    "Customer name:", custNameTxtF,
-				    "Payment method:", payMethdCombox
-				};
-			int option = JOptionPane.showConfirmDialog(null, message, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
+			resetCustEditCtrls();
+			int option = JOptionPane.showConfirmDialog(null, customerEditCtrls, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
 			if (option == JOptionPane.OK_OPTION) {
 				Customer tempCust1 = customerFactory.createCustomer(custCidTxtF.getText(), custNameTxtF.getText(), 
 						payMethdCombox.getSelectedItem().toString());
 				customerModel.addRow(tempCust1);
 			} else {}
-			custCidTxtF.setText("");
-			custCidTxtF.setEditable(true);
-			custNameTxtF.setText("");
-			payMethdCombox.setEnabled(true);
+			resetCustEditCtrls();
 		}
 		else if ("save employee" == atnEvt.getActionCommand()) {	// manage things differently, not locally
-			if (empEidTxtF.isEditable()) {	// create new
+			if (empEidTxtF.isEditable()) {	// create new employee
 				Customers cs = new Customers();
 				for (Customer temp : this.custList) {
 					cs.add(temp.getCid(), temp);
@@ -235,7 +219,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 				SaveEmployeeEvent see = new SaveEmployeeEvent(this, e);
 				goSaveEmployee(see);
 			}
-			else {	// edit
+			else {	// edit employee
 				Customers cs = new Customers();
 				for (Customer temp : this.custList) {
 					cs.add(temp.getCid(), temp);
@@ -261,7 +245,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			repaint();
 		}
 		else {
-			System.out.println("should never reach here: " + atnEvt.getActionCommand());
+			System.out.println("should never reach here: ");
 		}
 	}
 	
@@ -270,9 +254,16 @@ public class CustomerPanel extends JPanel implements ActionListener {
     }
 	
 	private void goSaveEmployee(SaveEmployeeEvent seEvt) {
-		for (SaveEmployeeListener hl : saveEmpyListeners) {
-            hl.saveEmpoyee(seEvt);
+		for (SaveEmployeeListener sel : saveEmpyListeners) {
+            sel.saveEmpoyee(seEvt);
 		}
+	}
+	
+	private void resetCustEditCtrls() {
+		custCidTxtF.setText("");
+		custCidTxtF.setEditable(true);
+		custNameTxtF.setText("");
+		payMethdCombox.setEnabled(true);
 	}
 	
 }

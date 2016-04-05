@@ -115,20 +115,20 @@ public class EmployeePanel extends JPanel implements ActionListener {
     }
 	
 	private void goEditEmployee(EditEmployeeEvent eeEvt) {
-		for (EditEmployeeListener hl : editEmpyListeners) {
-            hl.editEmpoyee(eeEvt);
+		for (EditEmployeeListener eel : editEmpyListeners) {
+            eel.editEmpoyee(eeEvt);
 		}
 	}
 	
 	private void goDeleteEmployee(DeleteEmployeeEvent deEvt) {
-		for (DeleteEmployeeListener hl : delEmpyListeners) {
-            hl.deleteEmpoyee(deEvt);
+		for (DeleteEmployeeListener del : delEmpyListeners) {
+            del.deleteEmpoyee(deEvt);
 		}
 	}
 	
 	private void goCreateEmployee(CreateEmployeeEvent ceEvt) {
-		for (CreateEmployeeListener hl : crteEmpyListeners) {
-            hl.createEmpoyee(ceEvt);
+		for (CreateEmployeeListener cel : crteEmpyListeners) {
+            cel.createEmpoyee(ceEvt);
 		}
 	}
 	
