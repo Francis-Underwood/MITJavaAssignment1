@@ -25,6 +25,7 @@ public class StartUp {
 	private static JButton saveDBBtn = new JButton(new ImageIcon("img/Save24.gif"));
 	private static JButton openDBBtn = new JButton(new ImageIcon("img/Open24.gif"));
 	private static JButton printBtn = new JButton(new ImageIcon("img/Print24.gif"));
+	private static JButton goBackBtn = new JButton(new ImageIcon("img/Exit24.gif"));
 	
 	// data access
 	private static DB db = new DB();
@@ -33,10 +34,12 @@ public class StartUp {
 	
 	// listeners
 	private static ActionListener saveDataMenuLstn;
+	private static ActionListener goBackMenuLstn;
 	private static EditEmployeeListener editEmpyLstn;
 	private static DeleteEmployeeListener delEmpyLstn;
 	private static SaveEmployeeListener saveEmpyLstn;
 	private static CreateEmployeeListener crteEmpyLstn;
+	 
 	
 	public static void main(String[] args) {
 		
@@ -50,6 +53,15 @@ public class StartUp {
 				writeDataInToDB();
 			}
 		};
+		goBackMenuLstn = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// update the user interface
+				if ("c"==status) {
+					switchToEmployeePanel();
+					status = "e";
+				}
+			}
+		};
 		
 		// employee-list-page components listeners
 		editEmpyLstn = new EditEmployeeListener() {
@@ -57,13 +69,7 @@ public class StartUp {
 				String eid = evt.getEmployeeId();
 				Employee empy = empyRepo.select(eid, elist);
 				if ("e" == status) {
-					con.remove(empPanl);
-					empPanl = null;
-					custPanl = new CustomerPanel(empy);
-					custPanl.addSaveEmployeeListener(saveEmpyLstn);
-					con.add(custPanl, BorderLayout.WEST);
-					frame.revalidate();
-					frame.repaint();
+					switchToCustomerPanel(empy);
 					status = "c";
 				}
 			}
@@ -79,13 +85,7 @@ public class StartUp {
 		crteEmpyLstn = new CreateEmployeeListener() {
 			public void createEmpoyee(CreateEmployeeEvent evt) {
 				if ("e" == status) {
-					con.remove(empPanl);
-					empPanl = null;
-					custPanl = new CustomerPanel(null);
-					custPanl.addSaveEmployeeListener(saveEmpyLstn);
-					con.add(custPanl, BorderLayout.WEST);
-					frame.revalidate();
-					frame.repaint();
+					switchToCustomerPanel(null);
 					status = "c";
 				}
 			}
@@ -103,15 +103,7 @@ public class StartUp {
 				}
 				// update the user interface
 				if ("c"==status) {
-					con.remove(custPanl);
-					custPanl = null;
-					empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
-					empPanl.addEditEmployeeListener(editEmpyLstn);
-					empPanl.addDeleteEmployeeListener(delEmpyLstn);
-					empPanl.addCreateEmployeeListener(crteEmpyLstn);
-					con.add(empPanl, BorderLayout.WEST);
-					frame.revalidate();
-					frame.repaint();
+					switchToEmployeePanel();
 					status = "e";
 				}
 			}
@@ -128,11 +120,15 @@ public class StartUp {
 		
 		// tool bar
 		tb.setFloatable(false);
-		saveDBBtn.setToolTipText("Save the data into txt file");
+		saveDBBtn.setToolTipText("save the data into txt file");
 		tb.add(saveDBBtn);
 		tb.add(openDBBtn);
 		tb.add(printBtn);
+		goBackBtn.setToolTipText("go back to main page");
+		tb.add(goBackBtn);
 		saveDBBtn.addActionListener(saveDataMenuLstn);
+		goBackBtn.addActionListener(goBackMenuLstn);
+		goBackBtn.setEnabled(false);
 		con.add(tb, BorderLayout.NORTH);
 		
 		
@@ -187,6 +183,30 @@ public class StartUp {
 		
 		frame.setVisible(true);
 		
+	}
+	
+	private static void switchToCustomerPanel(Employee empy) {
+		con.remove(empPanl);
+		empPanl = null;
+		custPanl = new CustomerPanel(empy);
+		custPanl.addSaveEmployeeListener(saveEmpyLstn);
+		con.add(custPanl, BorderLayout.WEST);
+		goBackBtn.setEnabled(true);
+		frame.revalidate();
+		frame.repaint();
+	}
+	
+	private static void switchToEmployeePanel() {
+		con.remove(custPanl);
+		custPanl = null;
+		empPanl = new EmployeePanel(new ArrayList<Employee>(empyRepo.all(elist)));
+		empPanl.addEditEmployeeListener(editEmpyLstn);
+		empPanl.addDeleteEmployeeListener(delEmpyLstn);
+		empPanl.addCreateEmployeeListener(crteEmpyLstn);
+		con.add(empPanl, BorderLayout.WEST);
+		goBackBtn.setEnabled(false);
+		frame.revalidate();
+		frame.repaint();
 	}
 	
 	private static void loadDataFromDB() {
