@@ -25,7 +25,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	private  JButton deleteCustBtn = new JButton("delete");
 	private  JButton editCustBtn = new JButton("edit");
 	private  JButton createCustBtn = new JButton("create");
-	private  JButton saveCustBtn = new JButton("save");
 	// employee property panel
 	private  JPanel empyPropsBar = new JPanel();
 	private  JTextField empEidTxtF = new JTextField();
@@ -38,7 +37,6 @@ public class CustomerPanel extends JPanel implements ActionListener {
 													}
 												);
 	// customer property panel
-	private  JPanel custPropsBar = new JPanel();
 	private  JTextField custCidTxtF = new JTextField();
 	private  JTextField custNameTxtF = new JTextField();
 	private  JComboBox<String> payMethdCombox = new JComboBox<String>(
@@ -127,8 +125,9 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		add(empyPropsBar);
 		// employee property panel ends
 		
-		
+		// add margin space
 		add(Box.createVerticalStrut(10));	
+		
 		
 		// customer list
 		table = new JTable(customerModel);
@@ -140,6 +139,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		scrollPane.getViewport().add(table);
 		scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
+		
 		// buttons to interact with customer table
 		btnBar = new JPanel();
 		btnBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -147,34 +147,10 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		deleteCustBtn.addActionListener(this);
 		editCustBtn.addActionListener(this);
 		createCustBtn.addActionListener(this);
-		saveCustBtn.addActionListener(this);
 		btnBar.add(deleteCustBtn);
 		btnBar.add(editCustBtn);
 		btnBar.add(createCustBtn);
-		btnBar.add(saveCustBtn);
-		
 		// customer list ends
-
-		// customer property panel
-		SpringLayout layout2 = new SpringLayout();
-		custPropsBar.setLayout(layout2);
-		custPropsBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-		custPropsBar.setPreferredSize(new Dimension(200, 100));
-		custPropsBar.add(new JLabel("Customer Id: "));
-		custCidTxtF.setMaximumSize(new Dimension(20, 10));
-		custPropsBar.add(custCidTxtF);
-		custPropsBar.add(new JLabel("Customer name: "));
-		custNameTxtF.setMaximumSize(new Dimension(80, 10));
-		custPropsBar.add(custNameTxtF);
-		custPropsBar.add(new JLabel("Payment method: "));
-		payMethdCombox.setMaximumSize(new Dimension(60, 10));
-		custPropsBar.add(payMethdCombox);
-		SpringUtilities.makeGrid(custPropsBar,
-                3, 2, //rows, cols
-                5, 5,
-                5, 5);
-		
-		// customer property panel ends
 		
 		
 		// add the components
@@ -184,16 +160,13 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		else if (empType == EmployeeFactory.SALESPERSON) {
 			add(scrollPane);
 			add(btnBar);
-			add(custPropsBar);
 			if (null == empy) { // create
 				// add listeners
 				empTypeCombox.addActionListener(this);
 			}
 		}
 		
-		
 		setBounds(0, 0, 800, 300);
-		
 		revalidate();
 		repaint();
 		
@@ -213,6 +186,20 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			custNameTxtF.setText(c.getCname());
 			payMethdCombox.setSelectedItem(c.getPaymentMethod());
 			payMethdCombox.setEnabled(false);
+			Object[] message = {
+				    "Customer Id:", custCidTxtF,
+				    "Customer name:", custNameTxtF,
+				    "Payment method:", payMethdCombox
+				};
+			int option = JOptionPane.showConfirmDialog(null, message, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
+			if (option == JOptionPane.OK_OPTION) {
+				customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
+			} else {}
+			this.rowInd = -1;
+			custCidTxtF.setText("");
+			custCidTxtF.setEditable(true);
+			custNameTxtF.setText("");
+			payMethdCombox.setEnabled(true);
 		}
 		else if ("create" == atnEvt.getActionCommand()) {
 			this.rowInd = -1;
@@ -220,17 +207,17 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			custCidTxtF.setEditable(true);
 			custNameTxtF.setText("");
 			payMethdCombox.setEnabled(true);
-		}
-		else if ("save" == atnEvt.getActionCommand()) {
-			if (-1!=this.rowInd) {	// edit
-				customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
-			}
-			else {	// create
-				Customer c = customerFactory.createCustomer(custCidTxtF.getText(), custNameTxtF.getText(), 
-												payMethdCombox.getSelectedItem().toString());
-				customerModel.addRow(c);
-			}
-			this.rowInd = -1;
+			Object[] message = {
+				    "Customer Id:", custCidTxtF,
+				    "Customer name:", custNameTxtF,
+				    "Payment method:", payMethdCombox
+				};
+			int option = JOptionPane.showConfirmDialog(null, message, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
+			if (option == JOptionPane.OK_OPTION) {
+				Customer tempCust1 = customerFactory.createCustomer(custCidTxtF.getText(), custNameTxtF.getText(), 
+						payMethdCombox.getSelectedItem().toString());
+				customerModel.addRow(tempCust1);
+			} else {}
 			custCidTxtF.setText("");
 			custCidTxtF.setEditable(true);
 			custNameTxtF.setText("");
@@ -265,12 +252,10 @@ public class CustomerPanel extends JPanel implements ActionListener {
 			if (EmployeeFactory.OTHERSTAFF == empType) {
 				remove(scrollPane);
 				remove(btnBar);
-				remove(custPropsBar);
 			}
 			else {
 				add(scrollPane);
 				add(btnBar);
-				add(custPropsBar);
 			}
 			revalidate();
 			repaint();
