@@ -78,7 +78,6 @@ public class StartUp {
 			public void deleteEmpoyee(DeleteEmployeeEvent evt) {
 				String eid = evt.getEmployeeId();
 				empyRepo.delete(eid, elist);
-				//elist.delete(eid);
 				System.out.println("#: " + elist.size());
 			}
 		};
@@ -215,6 +214,14 @@ public class StartUp {
 	
 	private static void writeDataInToDB() {
 		db.saveDatabase(elist,"customersdb.txt");
+		showMessageBox("Synchronization with database is done, you are ready to quit.");
+	}
+	
+	private static void showMessageBox(String message) {
+		JOptionPane pane = new JOptionPane(message);
+		JInternalFrame intframe = pane.createInternalFrame(frame.getLayeredPane(), "Notice");
+		frame.getLayeredPane().add(intframe);
+		intframe.show();
 	}
 }
 
