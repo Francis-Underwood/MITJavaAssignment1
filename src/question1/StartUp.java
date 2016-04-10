@@ -26,7 +26,7 @@ public class StartUp {
 	// data access
 	private static Database db = new Database();
 	private static Employees elist;
-	private static Repository<String, Employee> empyRepo = EmployeeRepository.factory();
+	private static Repository<String, Employee> empyRepo = EmployeeRepository.getInstance();
 	
 	// listeners
 	private static ActionListener saveDataMenuLstn;

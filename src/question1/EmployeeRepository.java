@@ -32,7 +32,7 @@ public class EmployeeRepository implements Repository<String, Employee> {
 		return db.containsKey(key);
 	}
 	
-	public static Repository<String, Employee> factory() {
+	public static Repository<String, Employee> getInstance() {
 		if (null==employeeRepository) {
 			employeeRepository = new EmployeeRepository();
 		}

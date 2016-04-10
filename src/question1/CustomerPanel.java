@@ -99,6 +99,7 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		m_title.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(m_title);
 		
+		
 		// employee property panel
 		SpringLayout layout = new SpringLayout();
 		empyPropsBar.setLayout(layout);
@@ -128,13 +129,14 @@ public class CustomerPanel extends JPanel implements ActionListener {
 		add(empyPropsBar);
 		// employee property panel ends
 		
+		
 		// add margin space
 		add(Box.createVerticalStrut(10));	
 		
 		
 		// customer list
 		table = new JTable(customerModel);
-		// single row selection
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setPreferredScrollableViewportSize(new Dimension(600, 100));
 		scrollPane = new JScrollPane();
 		scrollPane.setPreferredSize(new Dimension(800, 220));
@@ -177,24 +179,28 @@ public class CustomerPanel extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent atnEvt) {
 		if ("delete" == atnEvt.getActionCommand()) {
-			int rowInd = table.getSelectedRow();
-			customerModel.removeRow(rowInd);
-			this.rowInd = -1;
+			this.rowInd = table.getSelectedRow();
+			if (-1 != this.rowInd) {
+				customerModel.removeRow(this.rowInd);
+				this.rowInd = -1;
+			}
 		}
 		else if ("edit" == atnEvt.getActionCommand()) {
 			this.rowInd = table.getSelectedRow();
-			Customer c = this.custList.get(this.rowInd); // should be synchronized with table model's list
-			custCidTxtF.setText(c.getCid());
-			custCidTxtF.setEditable(false);
-			custNameTxtF.setText(c.getCname());
-			payMethdCombox.setSelectedItem(c.getPaymentMethod());
-			payMethdCombox.setEnabled(false);
-			int option = JOptionPane.showConfirmDialog(null, customerEditCtrls, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
-			if (option == JOptionPane.OK_OPTION) {
-				customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
-			} else {}
-			this.rowInd = -1;
-			resetCustEditCtrls();
+			if (-1 != this.rowInd) {
+				Customer c = this.custList.get(this.rowInd); // should be synchronized with table model's list
+				custCidTxtF.setText(c.getCid());
+				custCidTxtF.setEditable(false);
+				custNameTxtF.setText(c.getCname());
+				payMethdCombox.setSelectedItem(c.getPaymentMethod());
+				payMethdCombox.setEnabled(false);
+				int option = JOptionPane.showConfirmDialog(null, customerEditCtrls, "Customer Info", JOptionPane.OK_CANCEL_OPTION);
+				if (option == JOptionPane.OK_OPTION) {
+					customerModel.setValueAt(custNameTxtF.getText(), this.rowInd, 1);
+				} else {}
+				this.rowInd = -1;
+				resetCustEditCtrls();
+			}
 		}
 		else if ("create" == atnEvt.getActionCommand()) {
 			this.rowInd = -1;

@@ -40,7 +40,7 @@ public class EmployeePanel extends JPanel implements ActionListener {
 		
 		table = new JTable(employeeModel);
 		// single row selection
-		//table.set
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.setPreferredScrollableViewportSize(new Dimension(600, 200));
 		scrollPane = new JScrollPane();
 		
@@ -68,18 +68,22 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent atnEvt)	{
 		if ("delete" == atnEvt.getActionCommand()) {
 			int rowInd = table.getSelectedRow();
-			String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
-			employeeModel.removeRow(rowInd);
-			//  inform main
-			DeleteEmployeeEvent dee = new DeleteEmployeeEvent(this, empyKey);
-			goDeleteEmployee(dee);
+			if (-1 != rowInd) {
+				String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
+				employeeModel.removeRow(rowInd);
+				//  inform main
+				DeleteEmployeeEvent dee = new DeleteEmployeeEvent(this, empyKey);
+				goDeleteEmployee(dee);
+			}
 		}
 		else if ("edit" == atnEvt.getActionCommand()) {
 			int rowInd = table.getSelectedRow();
-			String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
-			// inform main
-			EditEmployeeEvent eee = new EditEmployeeEvent(this, empyKey);
-			goEditEmployee(eee);
+			if (-1 != rowInd) {
+				String empyKey = employeeModel.getValueAt(rowInd, 0).toString();
+				// inform main
+				EditEmployeeEvent eee = new EditEmployeeEvent(this, empyKey);
+				goEditEmployee(eee);
+			}
 		}
 		else if ("create" == atnEvt.getActionCommand()) {
 			CreateEmployeeEvent cee = new CreateEmployeeEvent(this);
