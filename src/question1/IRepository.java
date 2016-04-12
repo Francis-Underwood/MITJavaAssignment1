@@ -2,7 +2,7 @@ package question1;
 
 import java.util.*;
 
-public interface Repository<K, V> {
+public interface IRepository<K, V> {
 	public V select(K key, EntityService<K, V> db); 
 	public void add(K key, V val, EntityService<K, V> db);    
 	public void update(K key, V val, EntityService<K, V> db); 

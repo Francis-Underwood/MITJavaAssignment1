@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.*;
 import question1.systemEvents.*;
 
 public class EmployeePanel extends JPanel implements ActionListener {
@@ -23,9 +22,9 @@ public class EmployeePanel extends JPanel implements ActionListener {
 	private EmployeeTableModel employeeModel;
 	
 	// custom event
-	private List<EditEmployeeListener> editEmpyListeners = new ArrayList<EditEmployeeListener>();
-	private List<DeleteEmployeeListener> delEmpyListeners = new ArrayList<DeleteEmployeeListener>();
-	private List<CreateEmployeeListener> crteEmpyListeners = new ArrayList<CreateEmployeeListener>();
+	private List<IEditEmployeeListener> editEmpyListeners = new ArrayList<IEditEmployeeListener>();
+	private List<IDeleteEmployeeListener> delEmpyListeners = new ArrayList<IDeleteEmployeeListener>();
+	private List<ICreateEmployeeListener> crteEmpyListeners = new ArrayList<ICreateEmployeeListener>();
 	
 	public EmployeePanel (ArrayList<Employee> empList) {
 		this.empList = empList;
@@ -94,104 +93,46 @@ public class EmployeePanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	public void addEditEmployeeListener(EditEmployeeListener eeLtner) {
+	public void addEditEmployeeListener(IEditEmployeeListener eeLtner) {
         editEmpyListeners.add(eeLtner);
     }
 	
-	public void removeEditEmployeeListener(EditEmployeeListener eeLtner) {
+	public void removeEditEmployeeListener(IEditEmployeeListener eeLtner) {
         editEmpyListeners.remove(eeLtner);
     }
 	
-	public void addDeleteEmployeeListener(DeleteEmployeeListener deLtner) {
+	public void addDeleteEmployeeListener(IDeleteEmployeeListener deLtner) {
 		delEmpyListeners.add(deLtner);
     }
 	
-	public void removeDeleteEmployeeListener(DeleteEmployeeListener deLtner) {
+	public void removeDeleteEmployeeListener(IDeleteEmployeeListener deLtner) {
 		delEmpyListeners.remove(deLtner);
     }
 	
-	public void addCreateEmployeeListener(CreateEmployeeListener ceLtner) {
+	public void addCreateEmployeeListener(ICreateEmployeeListener ceLtner) {
         crteEmpyListeners.add(ceLtner);
     }
 	
-	public void removeCreateEmployeeListener(CreateEmployeeListener toRemove) {
+	public void removeCreateEmployeeListener(ICreateEmployeeListener toRemove) {
         crteEmpyListeners.remove(toRemove);
     }
 	
 	private void goEditEmployee(EditEmployeeEvent eeEvt) {
-		for (EditEmployeeListener eel : editEmpyListeners) {
+		for (IEditEmployeeListener eel : editEmpyListeners) {
             eel.editEmpoyee(eeEvt);
 		}
 	}
 	
 	private void goDeleteEmployee(DeleteEmployeeEvent deEvt) {
-		for (DeleteEmployeeListener del : delEmpyListeners) {
+		for (IDeleteEmployeeListener del : delEmpyListeners) {
             del.deleteEmpoyee(deEvt);
 		}
 	}
 	
 	private void goCreateEmployee(CreateEmployeeEvent ceEvt) {
-		for (CreateEmployeeListener cel : crteEmpyListeners) {
+		for (ICreateEmployeeListener cel : crteEmpyListeners) {
             cel.createEmpoyee(ceEvt);
 		}
-	}
-	
-}
-
-class EmployeeTableModel extends AbstractTableModel {
-	
-	private static final long serialVersionUID = 2735947194297668970L;
-	private static final String columnNames[] = {"Employee Id", "Employee First Name", "Employee Last Name", "Category",
-												"# of Customers"};
-	protected ArrayList<Employee> empList;
-	
-	public EmployeeTableModel(ArrayList<Employee> empList) {
-	    this.empList = empList;
-	}
-	
-	@Override
-	public int getColumnCount() {
-	    return columnNames.length;
-	}
-	
-	@Override
-    public int getRowCount() {
-        return empList.size();
-    }
-	
-	 @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
-    }
-	 
-	@Override
-    public Object getValueAt(int row, int col) {
-		if (row < 0 || row >= getRowCount()) {
-    		return "";
-    	}
-    	Employee e = this.empList.get(row);
-    	switch (col) {
-    		case 0: return e.getEid();
-    		case 1: return e.getFname();
-    		case 2: return e.getLname();
-    		case 3: return (e instanceof SalesPerson)?EmployeeFactory.SALESPERSON:EmployeeFactory.OTHERSTAFF;
-    		case 4: return (e instanceof SalesPerson)?((SalesPerson)e).getCustomers().size():"N/A";
-	    }
-    	return "";
-    }
-	
-	public void removeRow(int index) {
-		empList.remove(index);
-		this.fireTableRowsDeleted(index, index);
-	}
-	
-	public void addRow(Employee emp) {
-		empList.add(emp);
-		this.fireTableRowsInserted(empList.size()-1, empList.size()-1);
-	}
-	
-	public String getTitle() {
-		return "Employee List";
 	}
 	
 }

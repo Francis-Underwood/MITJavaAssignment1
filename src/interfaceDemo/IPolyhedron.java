@@ -1,6 +1,6 @@
 package interfaceDemo;
 
-public interface IPolyhedron {
+interface IPolyhedron {
 	public abstract String getColor();
 	public abstract void setColor(String color);
 	public abstract int getFace();

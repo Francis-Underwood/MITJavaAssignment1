@@ -1,6 +1,6 @@
 package interfaceDemo;
 
-public class Tetrahedron implements IPolyhedron {
+class Tetrahedron implements IPolyhedron {
 	private final int FACE = 4;
 	private final int EDGE = 6;
 	private final int VERTEX = 4;

@@ -2,7 +2,7 @@ package question1;
 
 import java.util.*;
 
-public class CustomerRepository implements Repository<String, Customer> {
+public class CustomerRepository implements IRepository<String, Customer> {
 
 	private static CustomerRepository customerRepository;	//singleton pattern
 	
@@ -32,7 +32,7 @@ public class CustomerRepository implements Repository<String, Customer> {
 		return db.containsKey(key);
 	}
 	
-	public static Repository<String, Customer> getInstance() {
+	public static IRepository<String, Customer> getInstance() {
 		if (null==customerRepository) {
 			customerRepository = new CustomerRepository();
 		}

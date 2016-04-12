@@ -26,15 +26,15 @@ public class StartUp {
 	// data access
 	private static Database db = new Database();
 	private static Employees elist;
-	private static Repository<String, Employee> empyRepo = EmployeeRepository.getInstance();
+	private static IRepository<String, Employee> empyRepo = EmployeeRepository.getInstance();
 	
 	// listeners
 	private static ActionListener saveDataMenuLstn;
 	private static ActionListener goBackMenuLstn;
-	private static EditEmployeeListener editEmpyLstn;
-	private static DeleteEmployeeListener delEmpyLstn;
-	private static SaveEmployeeListener saveEmpyLstn;
-	private static CreateEmployeeListener crteEmpyLstn;
+	private static IEditEmployeeListener editEmpyLstn;
+	private static IDeleteEmployeeListener delEmpyLstn;
+	private static ISaveEmployeeListener saveEmpyLstn;
+	private static ICreateEmployeeListener crteEmpyLstn;
 	 
 	
 	public static void main(String[] args) {
@@ -60,7 +60,7 @@ public class StartUp {
 		};
 		
 		// employee-list-page components listeners
-		editEmpyLstn = new EditEmployeeListener() {
+		editEmpyLstn = new IEditEmployeeListener() {
 			public void editEmpoyee(EditEmployeeEvent evt) {
 				String eid = evt.getEmployeeId();
 				Employee empy = empyRepo.select(eid, elist);
@@ -70,14 +70,14 @@ public class StartUp {
 				}
 			}
 		};
-		delEmpyLstn = new DeleteEmployeeListener() {
+		delEmpyLstn = new IDeleteEmployeeListener() {
 			public void deleteEmpoyee(DeleteEmployeeEvent evt) {
 				String eid = evt.getEmployeeId();
 				empyRepo.delete(eid, elist);
 				System.out.println("#: " + elist.size());
 			}
 		};
-		crteEmpyLstn = new CreateEmployeeListener() {
+		crteEmpyLstn = new ICreateEmployeeListener() {
 			public void createEmpoyee(CreateEmployeeEvent evt) {
 				if ("e" == status) {
 					switchToCustomerPanel(null);
@@ -87,7 +87,7 @@ public class StartUp {
 		};
 		
 		// employee-edit-page components listeners
-		saveEmpyLstn = new SaveEmployeeListener() {
+		saveEmpyLstn = new ISaveEmployeeListener() {
 			public void saveEmpoyee(SaveEmployeeEvent evt) {
 				Employee e = evt.getEmployee();
 				if (empyRepo.containsKey(e.getEid(), elist)) {

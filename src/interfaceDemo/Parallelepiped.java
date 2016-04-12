@@ -1,6 +1,6 @@
 package interfaceDemo;
 
-public class Parallelepiped implements IPolyhedron {
+class Parallelepiped implements IPolyhedron {
 	private final int FACE = 6;
 	private final int EDGE = 12;
 	private final int VERTEX = 8;
