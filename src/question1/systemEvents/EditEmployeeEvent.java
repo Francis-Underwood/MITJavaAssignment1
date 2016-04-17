@@ -17,6 +17,3 @@ public class EditEmployeeEvent extends EventObject {
 	}
 	
 }
-
-
-

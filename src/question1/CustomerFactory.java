@@ -9,7 +9,6 @@ public final class CustomerFactory {
 			case PAYMENTMETHOD_CASH:
 				return new CustomerPayCash(cid, cname);
 			case PAYMENTMETHOD_CREDITCARD:
-				//break;
 			default:
 				return new CustomerPayWithCreditCard(cid, cname);
 		}
